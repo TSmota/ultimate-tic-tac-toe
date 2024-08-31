@@ -6,4 +6,10 @@ module.exports = {
   parserOptions: {
     project: true,
   },
+  plugins: ["eslint-plugin-react"],
+  rules: {
+    'react/jsx-no-literals': 'error',
+    'react/prop-types': 'off',
+    'react/react-in-jsx-scope': 'off'
+  },
 };

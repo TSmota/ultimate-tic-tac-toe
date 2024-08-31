@@ -1,0 +1,79 @@
+{
+  "manifest": {
+    "name": "Super jogo da velha"
+  },
+  "metadata": {
+    "title": "Super jogo da velha",
+    "description": "Super jogo da velha",
+    "keywords": "jogo da velha, jogo"
+  },
+  "home": {
+    "title": "Super jogo da velha",
+    "createGame": "Criar jogo",
+    "joinGame": "Entrar no jogo",
+    "about": "Sobre"
+  },
+  "languages": {
+    "en": "Inglês",
+    "pt": "Português"
+  },
+  "common": {
+    "fields": {
+      "errors": {
+        "invalidCode": "Código inválido",
+        "required": "Este campo é obrigatório",
+        "maxLength": "Deve ter no máximo {count} caracteres",
+        "minLength": "Deve ter pelo menos {count, plural, =1 {1 caractere} other {# caracteres}}"
+      }
+    }
+  },
+  "components": {
+    "dialog": {
+      "close": "Fechar"
+    },
+    "aboutDialog": {
+      "title": "Oi, tudo bem 👋",
+      "content": "Sou um engenheiro de software e criei este jogo para praticar minhas habilidades. Espero que você goste! Se você tiver algum feedback, por favor me avise. Você pode me encontrar no GitHub em <githubLink>@TSmota</githubLink>. \n\nEste jogo é uma reprodução do jogo \"Super jogo da velha\", você pode verificar a wikipedia para uma explicação completa sobre ele."
+    },
+    "createGameDialog": {
+      "fields": {
+        "username": {
+          "label": "Nome de usuário",
+          "placeholder": "Escolha seu nome de usuário"
+        },
+        "variant": {
+          "label": "Variante",
+          "placeholder": "Escolha a variante do jogo que você deseja jogar",
+          "options": {
+            "classic": "Clássico",
+            "unlocked": "Desbloqueado",
+            "conquer": "Conquista"
+          },
+          "description": "Clássico: O clássico super jogo da velha.\nDesbloqueado: Áreas ganhas ainda são jogáveis se tiverem espaços vazios.\nConquista: Ganhe conquistando 5 áreas em qualquer lugar em vez de 3 em linha."
+        }
+      },
+      "submit": "Criar jogo",
+      "title": "Configurações",
+      "description": "Configure sua partida"
+    },
+    "joinGameDialog": {
+      "fields": {
+        "code": {
+          "label": "Código do jogo",
+          "placeholder": "Digite o código do jogo"
+        },
+        "username": {
+          "label": "Nome de usuário",
+          "placeholder": "Escolha seu nome de usuário"
+        }
+      },
+      "submit": "Entrar em um jogo"
+    },
+    "themeToggle": {
+      "dark": "Escuro",
+      "light": "Claro",
+      "system": "Sistema",
+      "toggle": "Alternar tema"
+    }
+  }
+}

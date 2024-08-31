@@ -1,0 +1,75 @@
+{
+  "manifest": {
+    "name": "Ultimate tic-tac-toe game"
+  },
+  "metadata": {
+    "title": "Ultimate tic-tac-toe game",
+    "description": "Ultimate tic-tac-toe game",
+    "keywords": "tic-tac-toe, game"
+  },
+  "home": {
+    "title": "Ultimate tic-tac-toe",
+    "createGame": "Create game",
+    "joinGame": "Join game",
+    "about": "About"
+  },
+  "languages": {
+    "en": "English",
+    "pt": "Portuguese"
+  },
+  "common": {
+    "fields": {
+      "errors": {
+        "invalidCode": "Invalid code",
+        "required": "This field is required",
+        "maxLength": "Must have at most {count} characters",
+        "minLength": "Must have at least {count, plural, =1 {1 character} other {# characters}}"
+      }
+    }
+  },
+  "components": {
+    "dialog": {
+      "close": "Close"
+    },
+    "aboutDialog": {
+      "title": "Hi, there 👋",
+      "content": "I'm a software engineer and I created this game to practice my skills. I hope you enjoy it! If you have any feedback, please let me know. You can find me on GitHub at <githubLink>@TSmota</githubLink>. \n\nThis game is a reproduction of the game \"Ultimate Tic-Tac-Toe\", you can check the wikipedia for a complete explanation about it."
+    },
+    "createGameDialog": {
+      "fields": {
+        "username": {
+          "label": "Username"
+        },
+        "variant": {
+          "label": "Variant",
+          "options": {
+            "classic": "Classic",
+            "unlocked": "Unlocked",
+            "conquer": "Conquer"
+          },
+          "description": "Classic: The classic ultimate tic-tac-toe game.\nUnlocked: Won boxes are still playable if they have empty spaces.\nConquer: Win by conquering 5 boxes anywhere instead of 3 in a row."
+        }
+      },
+      "submit": "Create game",
+      "title": "Settings",
+      "description": "Configure your match"
+    },
+    "joinGameDialog": {
+      "fields": {
+        "code": {
+          "label": "Code"
+        },
+        "username": {
+          "label": "Username"
+        }
+      },
+      "submit": "Join game"
+    },
+    "themeToggle": {
+      "dark": "Dark",
+      "light": "Light",
+      "system": "System",
+      "toggle": "Toggle theme"
+    }
+  }
+}

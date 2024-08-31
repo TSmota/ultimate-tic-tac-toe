@@ -5,12 +5,13 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "ui:add": "yarn workspace web ui:add"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "turbo": "^2.1.1",
-    "typescript": "^5.4.5"
+    "prettier": "3.2.5",
+    "turbo": "2.1.1",
+    "typescript": "^5"
   },
   "engines": {
     "node": ">=18"
