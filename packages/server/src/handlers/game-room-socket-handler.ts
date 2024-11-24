@@ -8,10 +8,11 @@ import {
   StartGameMessage,
   UpdateRoomInformationMessage,
   ClickCellMessage,
+  PlayerInfo,
 } from '@repo/commons';
 
 export class GameRoomSocketHandler {
-  username?: string;
+  player?: PlayerInfo;
 
   constructor(
     private socket: WebSocket,
@@ -36,7 +37,7 @@ export class GameRoomSocketHandler {
   listener = (message: Message, done: () => void) => {
     if (
       message.topic === this.roomId &&
-      (message.broadcast || message.username === this.username)
+      (message.broadcast || message.player?.uuid === this.player?.uuid)
     ) {
       this.socket.send(JSON.stringify(message));
     }
@@ -67,14 +68,14 @@ export class GameRoomSocketHandler {
 
   handlePlayerJoined(message: JoinGameMessage) {
     this.emitter.on(this.roomId, this.listener);
-    this.username = message.payload.username;
+    this.player = message.payload.player;
 
     this.emitter.emit({
       broadcast: true,
       type: WebSocketServerAction.PLAYER_JOINED,
       topic: this.roomId,
       payload: {
-        username: message.payload.username,
+        player: message.payload.player,
       },
     });
   }
@@ -85,6 +86,7 @@ export class GameRoomSocketHandler {
       type: WebSocketServerAction.ROOM_INFORMATION,
       topic: this.roomId,
       payload: {
+        selectedAreas: message.payload.selectedAreas,
         players: message.payload.players,
         variant: message.payload.variant,
       },

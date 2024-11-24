@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type PlayerInfo } from '@repo/commons';
-import { playerInfoKey } from '@src/constants';
+import { PLAYER_INFO_KEY } from '@src/constants';
 import { storageService } from '@src/services/storage';
 import { customZodMessage } from '@src/lib/utils';
 import { Input } from '@src/components/ui/input';
@@ -59,12 +59,12 @@ export function JoinGameDialog(props: JoinGameDialogProps) {
 
   useEffect(() => {
     // Inside of useEffect to not throw an error on the server side due to localStorage being undefined
-    form.setValue('username', storageService.getItem<PlayerInfo>(playerInfoKey)?.username ?? '');
+    form.setValue('username', storageService.getItem<PlayerInfo>(PLAYER_INFO_KEY)?.username ?? '');
   }, [form]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    storageService.setItem(playerInfoKey, {
-      id: crypto.randomUUID(),
+    storageService.setItem(PLAYER_INFO_KEY, {
+      uuid: crypto.randomUUID(),
       isHost: false,
       username: data.username,
     });

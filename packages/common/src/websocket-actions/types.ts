@@ -1,4 +1,4 @@
-import { AreaLocation, RoomInfo } from '../types';
+import { AreaLocation, PlayerInfo, RoomInfo } from '../commons/types';
 import { WebSocketClientAction, WebSocketServerAction } from './constants';
 
 interface BaseMessage {
@@ -10,14 +10,14 @@ interface BaseMessage {
 export interface JoinGameMessage extends BaseMessage {
   type: WebSocketClientAction.JOIN_GAME;
   payload: {
-    username: string;
+    player: PlayerInfo;
   };
 }
 
 export interface StartGameMessage extends BaseMessage {
   type: WebSocketClientAction.START_GAME;
   payload: {
-    players: string[];
+    players: PlayerInfo[];
   };
 }
 
@@ -25,7 +25,7 @@ export interface ClickCellMessage extends BaseMessage {
   type: WebSocketClientAction.CLICK_CELL;
   payload: {
     location: AreaLocation;
-    player: string;
+    player: PlayerInfo;
   };
 }
 
@@ -33,14 +33,14 @@ export interface ClickedCellMessage extends BaseMessage {
   type: WebSocketServerAction.CELL_CLICKED;
   payload: {
     location: AreaLocation;
-    player: string;
+    player: PlayerInfo;
   };
 }
 
 export interface PlayerJoinedMessage extends BaseMessage {
   type: WebSocketServerAction.PLAYER_JOINED;
   payload: {
-    username: string;
+    player: PlayerInfo;
   };
 }
 
@@ -57,14 +57,14 @@ export interface RoomInformationMessage extends BaseMessage {
 export interface GameStartedMessage extends BaseMessage {
   type: WebSocketServerAction.GAME_STARTED;
   payload: {
-    players: string[];
+    players: PlayerInfo[];
   };
 }
 
 export interface GameEndedMessage extends BaseMessage {
   type: WebSocketServerAction.GAME_ENDED;
   payload: {
-    winner: string;
+    winner: PlayerInfo;
   };
 }
 

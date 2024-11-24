@@ -4,10 +4,10 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { type PlayerInfo } from '@repo/commons';
+import { GameVariant, type PlayerInfo } from '@repo/commons';
 import { storageService } from '@src/services/storage';
 import { customZodMessage, generateGameCode } from '@src/lib/utils';
-import { playerInfoKey, roomInfoKey } from '@src/constants';
+import { PLAYER_INFO_KEY, ROOM_INFO_KEY } from '@src/constants';
 import { Input } from '@src/components/ui/input';
 import {
   FormField,
@@ -54,25 +54,25 @@ export function CreateGameDialog(props: CreateGameDialogProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      variant: 'classic',
+      variant: GameVariant.CLASSIC,
     },
   });
 
   useEffect(() => {
-    // Inside of useEffect to not throw an error on the server side due to localStorage being undefined
-    form.setValue('username', storageService.getItem<PlayerInfo>(playerInfoKey)?.username ?? '');
+    // Inside of useEffect to not throw an error on the server side due to storage being undefined
+    form.setValue('username', storageService.getItem<PlayerInfo>(PLAYER_INFO_KEY)?.username ?? '');
   }, [form]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    storageService.setItem(playerInfoKey, {
-      id: crypto.randomUUID(),
+    storageService.setItem(PLAYER_INFO_KEY, {
+      uuid: crypto.randomUUID(),
       isHost: true,
       username: data.username,
     });
 
     const gameCode = generateGameCode();
 
-    storageService.setItem(`${gameCode}-${roomInfoKey}`, {
+    storageService.setItem(`${gameCode}-${ROOM_INFO_KEY}`, {
       variant: data.variant,
       players: [],
     });
@@ -117,11 +117,11 @@ export function CreateGameDialog(props: CreateGameDialogProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="classic">{t('fields.variant.options.classic')}</SelectItem>
-                      <SelectItem value="unlocked">
+                      <SelectItem value={GameVariant.CLASSIC}>{t('fields.variant.options.classic')}</SelectItem>
+                      <SelectItem value={GameVariant.UNLOCKED}>
                         {t('fields.variant.options.unlocked')}
                       </SelectItem>
-                      <SelectItem value="conquer">{t('fields.variant.options.conquer')}</SelectItem>
+                      <SelectItem value={GameVariant.CONQUER}>{t('fields.variant.options.conquer')}</SelectItem>
                     </SelectContent>
                   </Select>
 
