@@ -5,10 +5,12 @@ const project = resolve(process.cwd(), "tsconfig.json");
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   extends: [
-    "@typescript-eslint/eslint-plugin",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
     "prettier",
     require.resolve("@vercel/style-guide/eslint/next"),
-    "turbo",
+    "eslint-config-turbo",
   ],
   globals: {
     React: true,
@@ -27,7 +29,6 @@ module.exports = {
     },
   },
   ignorePatterns: [
-    // Ignore dotfiles
     ".*.js",
     "node_modules/",
   ],

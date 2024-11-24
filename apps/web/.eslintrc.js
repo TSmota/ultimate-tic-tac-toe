@@ -11,5 +11,5 @@ module.exports = {
     'react/jsx-no-literals': 'error',
     'react/prop-types': 'off',
     'react/react-in-jsx-scope': 'off'
-  },
+  }
 };

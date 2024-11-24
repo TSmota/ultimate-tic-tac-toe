@@ -9,7 +9,9 @@
     "ui:add": "yarn workspace web ui:add"
   },
   "devDependencies": {
+    "eslint": "8.57.1",
     "prettier": "3.2.5",
+    "prettier-plugin-tailwindcss": "0.6.6",
     "turbo": "2.1.1",
     "typescript": "^5"
   },
