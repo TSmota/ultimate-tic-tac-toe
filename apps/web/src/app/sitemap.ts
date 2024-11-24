@@ -1,10 +1,10 @@
-import { MetadataRoute } from 'next';
+import { type MetadataRoute } from 'next';
 import { locales, defaultLocale, host } from '@src/constants';
 
 const pathnames = {};
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const keys = Object.keys(pathnames) as Array<keyof typeof pathnames>;
+  const keys = Object.keys(pathnames) as (keyof typeof pathnames)[];
 
   function getUrl(pathname: keyof typeof pathnames, locale: (typeof locales)[number]) {
     return `${host}/${locale}${pathname === '/' ? '' : pathname}`;

@@ -1,8 +1,8 @@
 'use client';
 
-import { Locale, locales } from '@src/constants';
-import { setUserLocale } from '@src/services/locale';
 import { useLocale, useTranslations } from 'next-intl';
+import { type Locale, locales } from '@src/constants';
+import { setUserLocale } from '@src/services/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger } from './ui/select';
 
 export function LocaleSwitcher() {
@@ -17,9 +17,9 @@ export function LocaleSwitcher() {
     <Select onValueChange={onChange} value={locale}>
       <SelectTrigger className="w-auto">{t(locale)}</SelectTrigger>
       <SelectContent>
-        {locales.map((locale) => (
-          <SelectItem key={locale} value={locale}>
-            {t(locale)}
+        {locales.map((localeOption) => (
+          <SelectItem key={localeOption} value={localeOption}>
+            {t(localeOption)}
           </SelectItem>
         ))}
       </SelectContent>

@@ -1,5 +1,14 @@
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@src/components/ui/dialog';
 import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { type PlayerInfo } from '@repo/commons';
+import { storageService } from '@src/services/storage';
+import { customZodMessage, generateGameCode } from '@src/lib/utils';
+import { playerInfoKey, roomInfoKey } from '@src/constants';
+import { Input } from '@src/components/ui/input';
 import {
   FormField,
   FormItem,
@@ -9,20 +18,13 @@ import {
   FormDescription,
   FormMessage,
 } from '@src/components/ui/form';
-import { Input } from '@src/components/ui/input';
-import { useForm } from 'react-hook-form';
-import { Button } from './ui/button';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@src/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { storageService } from '@src/services/storage';
-import { useRouter } from 'next/navigation';
-import { customZodMessage, generateGameCode } from '@src/lib/utils';
-import { useEffect } from 'react';
+import { Button } from './ui/button';
 
 interface CreateGameDialogProps {
   open?: boolean;
-  onOpenChange?(open: boolean): void;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const FormSchema = z.object({
@@ -30,12 +32,18 @@ const FormSchema = z.object({
     .string({
       required_error: customZodMessage('common.fields.errors.required'),
     })
-    .min(2, customZodMessage('common.fields.errors.minLength', {
-      count: 2,
-    }))
-    .max(25, customZodMessage('common.fields.errors.maxLength', {
-      count: 25,
-    })),
+    .min(
+      2,
+      customZodMessage('common.fields.errors.minLength', {
+        count: 2,
+      }),
+    )
+    .max(
+      25,
+      customZodMessage('common.fields.errors.maxLength', {
+        count: 25,
+      }),
+    ),
   variant: z.string(),
 });
 
@@ -52,13 +60,22 @@ export function CreateGameDialog(props: CreateGameDialogProps) {
 
   useEffect(() => {
     // Inside of useEffect to not throw an error on the server side due to localStorage being undefined
-    form.setValue('username', storageService.getItem('username') ?? '');
+    form.setValue('username', storageService.getItem<PlayerInfo>(playerInfoKey)?.username ?? '');
   }, [form]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    storageService.setItem('username', data.username);
+    storageService.setItem(playerInfoKey, {
+      id: crypto.randomUUID(),
+      isHost: true,
+      username: data.username,
+    });
 
     const gameCode = generateGameCode();
+
+    storageService.setItem(`${gameCode}-${roomInfoKey}`, {
+      variant: data.variant,
+      players: [],
+    });
 
     router.push(`/game/${gameCode}`);
   };

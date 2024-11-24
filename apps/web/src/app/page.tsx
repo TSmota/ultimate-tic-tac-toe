@@ -1,10 +1,10 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { AboutDialog } from '@src/components/about-dialog';
 import { CreateGameDialog } from '@src/components/create-game-dialog';
 import { JoinGameDialog } from '@src/components/join-game-dialog';
-import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 
 export default function HomePage() {
   const t = useTranslations('home');
@@ -17,19 +17,19 @@ export default function HomePage() {
       <div className="flex flex-col gap-8">
         <div
           className="text-3xl hover:cursor-pointer hover:font-semibold"
-          onClick={() => setOption('create')}
+          onClick={() => { setOption('create'); }}
         >
           {t('createGame')}
         </div>
         <div
           className="text-3xl hover:cursor-pointer hover:font-semibold"
-          onClick={() => setOption('join')}
+          onClick={() => { setOption('join'); }}
         >
           {t('joinGame')}
         </div>
         <div
           className="text-3xl hover:cursor-pointer hover:font-semibold"
-          onClick={() => setOption('about')}
+          onClick={() => { setOption('about'); }}
         >
           {t('about')}
         </div>
@@ -37,15 +37,15 @@ export default function HomePage() {
 
       <CreateGameDialog
         open={option === 'create'}
-        onOpenChange={(open) => setOption(open ? 'create' : '')}
+        onOpenChange={(open) => { setOption(open ? 'create' : ''); }}
       />
       <JoinGameDialog
         open={option === 'join'}
-        onOpenChange={(open) => setOption(open ? 'join' : '')}
+        onOpenChange={(open) => { setOption(open ? 'join' : ''); }}
       />
       <AboutDialog
         open={option === 'about'}
-        onOpenChange={(open) => setOption(open ? 'about' : '')}
+        onOpenChange={(open) => { setOption(open ? 'about' : ''); }}
       />
     </div>
   );

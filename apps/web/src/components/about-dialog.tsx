@@ -1,10 +1,10 @@
-import { Dialog, DialogContent } from '@src/components/ui/dialog';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { Dialog, DialogContent } from '@src/components/ui/dialog';
 
 interface AboutDialogProps {
   open?: boolean;
-  onOpenChange?:(open: boolean) => void;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function AboutDialog(props: AboutDialogProps) {

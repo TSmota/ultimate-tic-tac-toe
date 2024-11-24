@@ -1,20 +1,28 @@
-import { Dialog, DialogContent } from '@src/components/ui/dialog';
 import { useTranslations } from 'next-intl';
-import { Form, FormControl, FormField, FormLabel, FormItem, FormMessage } from '@src/components/ui/form';
 import { useForm } from 'react-hook-form';
-import { Input } from '@src/components/ui/input';
 import { z } from 'zod';
-import { customZodMessage } from '@src/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { storageService } from '@src/services/storage';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { type PlayerInfo } from '@repo/commons';
+import { playerInfoKey } from '@src/constants';
+import { storageService } from '@src/services/storage';
+import { customZodMessage } from '@src/lib/utils';
+import { Input } from '@src/components/ui/input';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormLabel,
+  FormItem,
+  FormMessage,
+} from '@src/components/ui/form';
+import { Dialog, DialogContent } from '@src/components/ui/dialog';
 import { Button } from './ui/button';
-
 
 interface JoinGameDialogProps {
   open?: boolean;
-  onOpenChange?(open: boolean): void;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const FormSchema = z.object({
@@ -27,12 +35,18 @@ const FormSchema = z.object({
     .string({
       required_error: customZodMessage('common.fields.errors.required'),
     })
-    .min(2, customZodMessage('common.fields.errors.minLength', {
-      count: 2,
-    }))
-    .max(25, customZodMessage('common.fields.errors.maxLength', {
-      count: 25,
-    })),
+    .min(
+      2,
+      customZodMessage('common.fields.errors.minLength', {
+        count: 2,
+      }),
+    )
+    .max(
+      25,
+      customZodMessage('common.fields.errors.maxLength', {
+        count: 25,
+      }),
+    ),
 });
 
 export function JoinGameDialog(props: JoinGameDialogProps) {
@@ -45,11 +59,16 @@ export function JoinGameDialog(props: JoinGameDialogProps) {
 
   useEffect(() => {
     // Inside of useEffect to not throw an error on the server side due to localStorage being undefined
-    form.setValue('username', storageService.getItem('username') ?? '');
+    form.setValue('username', storageService.getItem<PlayerInfo>(playerInfoKey)?.username ?? '');
   }, [form]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    storageService.setItem('username', data.username);
+    storageService.setItem(playerInfoKey, {
+      id: crypto.randomUUID(),
+      isHost: false,
+      username: data.username,
+    });
+
     const gameCode = data.code.toUpperCase();
     // TODO: validate room code exists
     router.push(`/game/${gameCode}`);

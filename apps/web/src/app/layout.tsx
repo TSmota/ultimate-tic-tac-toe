@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
-import { PropsWithChildren } from 'react';
+import { type PropsWithChildren } from 'react';
 import { Header } from '@src/components/header';
-
 import { ThemeProvider } from '@src/components/theme-provider';
 import '../styles/global.css';
 import { cn } from '@src/lib/utils';
@@ -32,7 +30,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={cn('min-h-screen bg-background antialiased', inter.variable)}>
+      <body className={cn('bg-background min-h-screen antialiased', inter.variable)}>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Header />
