@@ -1,0 +1,26 @@
+{
+  "name": "@repo/commons",
+  "version": "0.0.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src --dts",
+    "dev": "tsup src/index.ts --watch --dts",
+    "lint": "eslint . --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "tsup": "8.2.4",
+    "typescript": "^5"
+  }
+}

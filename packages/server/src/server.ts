@@ -1,39 +1,42 @@
 import Fastify from 'fastify';
 import fastifyWebSocket from '@fastify/websocket';
 import cors from '@fastify/cors';
+import mq from 'mqemitter';
+import { GameRoomSocketHandler } from './handlers/game-room-socket-handler';
 
 const server = Fastify();
+const emitter = mq();
 
 server.register(cors, {
-    origin: '*',
+  origin: '*',
 });
 
 server.register(fastifyWebSocket);
 
+type RoomConnectRequest = {
+  Params: {
+    room: string;
+  };
+};
+
 server.register(async function (fastify) {
-    fastify.get('/', { websocket: true }, (socket, req) => {
-        socket.on('message', message => {
-            broadcastMessage(message.toString())
-        })
-    })
-})
+  fastify.get<RoomConnectRequest>('/socket/:room', { websocket: true }, (socket, req) => {
+    new GameRoomSocketHandler(socket, emitter, req.params.room);
+  });
+});
 
-function broadcastMessage(message: string) {
-    server.websocketServer.clients.forEach(client => {
-        if (client.readyState === client.OPEN) {
-            client.send(message);
-        }
+const start = async () => {
+  try {
+    const address = await server.listen({
+      port: process.env.PORT ? parseInt(process.env.PORT) : 3333,
+      host: '0.0.0.0',
     });
-}
-
-server.listen({
-    port: process.env.PORT ? parseInt(process.env.PORT) : 3333,
-    host: '0.0.0.0'
-}, (err, address) => {
-    if (err) {
-        console.error(err);
-        process.exit(1);
-    }
 
     console.log(`Server listening at: ${address}`);
-});
+  } catch (err) {
+    server.log.error(err);
+    process.exit(1);
+  }
+};
+
+start();
