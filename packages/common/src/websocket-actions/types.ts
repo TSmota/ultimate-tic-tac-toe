@@ -7,6 +7,11 @@ interface BaseMessage {
   topic: string;
 }
 
+export interface KeepAliveMessage extends BaseMessage {
+  type: WebSocketClientAction.KEEP_ALIVE | WebSocketServerAction.KEEP_ALIVE;
+  payload?: never;
+}
+
 export interface JoinGameMessage extends BaseMessage {
   type: WebSocketClientAction.JOIN_GAME;
   payload: {
@@ -69,6 +74,7 @@ export interface GameEndedMessage extends BaseMessage {
 }
 
 export type WebSocketMessage =
+  | KeepAliveMessage
   | JoinGameMessage
   | StartGameMessage
   | ClickCellMessage

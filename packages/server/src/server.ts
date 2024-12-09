@@ -19,9 +19,30 @@ type RoomConnectRequest = {
   };
 };
 
+type RoomState = {
+  room: string;
+  players: number;
+}
+
+const rooms = new Map<string, RoomState>();
+
 server.register(async function (fastify) {
   fastify.get<RoomConnectRequest>('/socket/:room', { websocket: true }, (socket, req) => {
-    new GameRoomSocketHandler(socket, emitter, req.params.room);
+    new GameRoomSocketHandler(socket, emitter, req.params.room, rooms);
+  });
+
+  fastify.get('/api/rooms', () => {
+    return Array.from(rooms.values());
+  });
+
+  fastify.get<RoomConnectRequest>('/api/rooms/:room', (req) => {
+    const room = rooms.get(req.params.room);
+
+    if (!room) {
+      return;
+    }
+
+    return room;
   });
 });
 

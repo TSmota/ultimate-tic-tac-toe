@@ -49,6 +49,10 @@ export default function GamePage(props: Props) {
   }, []);
 
   useEffect(() => {
+    if (readyState === ReadyState.CLOSED) {
+      router.push('/');
+    }
+
     if (readyState !== ReadyState.OPEN || isConnected.current || !playerInfo) {
       return;
     }
@@ -63,6 +67,18 @@ export default function GamePage(props: Props) {
         player: playerInfo,
       },
     });
+
+    const intervalId = setInterval(() => {
+      sendJsonMessage({
+        broadcast: false,
+        type: WebSocketClientAction.KEEP_ALIVE,
+        topic: params.id,
+      });
+    }, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [readyState]);
 
   useEffect(() => {
@@ -74,6 +90,9 @@ export default function GamePage(props: Props) {
     console.log('Received message:', lastJsonMessage);
 
     switch (type) {
+      case WebSocketServerAction.KEEP_ALIVE: {
+        break;
+      }
       case WebSocketServerAction.PLAYER_JOINED: {
         const isNewPlayer = !roomInfo?.players.some((player) => player.uuid === payload.player.uuid);
 
