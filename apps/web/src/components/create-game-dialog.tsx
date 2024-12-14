@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { GameVariant, type PlayerInfo } from '@repo/commons';
+import { GameVariant, RoomInfo, type PlayerInfo } from '@repo/commons';
 import { storageService } from '@src/services/storage';
 import { customZodMessage, generateGameCode } from '@src/lib/utils';
 import { PLAYER_INFO_KEY, ROOM_INFO_KEY } from '@src/constants';
@@ -68,14 +68,17 @@ export function CreateGameDialog(props: CreateGameDialogProps) {
       uuid: crypto.randomUUID(),
       isHost: true,
       username: data.username,
-    });
+    } as PlayerInfo);
 
     const gameCode = generateGameCode();
 
     storageService.setItem(`${gameCode}-${ROOM_INFO_KEY}`, {
+      gameInfo: {
+        selectedAreas: [],
+      },
       variant: data.variant,
       players: [],
-    });
+    } as RoomInfo);
 
     router.push(`/game/${gameCode}`);
   };

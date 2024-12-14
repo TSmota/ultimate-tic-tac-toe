@@ -1,18 +1,18 @@
-export enum WebSocketClientAction {
+export enum WebSocketCommonAction {
   KEEP_ALIVE = 'keep-alive',
+}
 
-  JOIN_GAME = 'join-game',
-  START_GAME = 'start-game',
+export enum WebSocketClientAction {
   CLICK_CELL = 'click-cell',
+  START_GAME = 'start-game',
+  UPDATE_PLAYER_INFO = 'update-player-info',
   UPDATE_ROOM_INFORMATION = 'update-room-information',
 }
 
 export enum WebSocketServerAction {
-  KEEP_ALIVE = 'keep-alive',
-
+  CELL_CLICKED = 'cell-clicked',
   GAME_STARTED = 'game-started',
   GAME_ENDED = 'game-ended',
-  CELL_CLICKED = 'cell-clicked',
-  PLAYER_JOINED = 'player-joined',
+  PLAYER_INFO = 'player-info',
   ROOM_INFORMATION = "room-information",
 }

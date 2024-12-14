@@ -1,19 +1,19 @@
 import { AreaLocation, PlayerInfo, RoomInfo } from '../commons/types';
-import { WebSocketClientAction, WebSocketServerAction } from './constants';
+import { WebSocketClientAction, WebSocketCommonAction, WebSocketServerAction } from './constants';
 
 interface BaseMessage {
   broadcast: boolean;
-  type: WebSocketClientAction | WebSocketServerAction;
+  type: WebSocketCommonAction | WebSocketClientAction | WebSocketServerAction;
   topic: string;
 }
 
 export interface KeepAliveMessage extends BaseMessage {
-  type: WebSocketClientAction.KEEP_ALIVE | WebSocketServerAction.KEEP_ALIVE;
+  type: WebSocketCommonAction.KEEP_ALIVE;
   payload?: never;
 }
 
 export interface JoinGameMessage extends BaseMessage {
-  type: WebSocketClientAction.JOIN_GAME;
+  type: WebSocketClientAction.UPDATE_PLAYER_INFO;
   payload: {
     player: PlayerInfo;
   };
@@ -27,15 +27,7 @@ export interface StartGameMessage extends BaseMessage {
 }
 
 export interface ClickCellMessage extends BaseMessage {
-  type: WebSocketClientAction.CLICK_CELL;
-  payload: {
-    location: AreaLocation;
-    player: PlayerInfo;
-  };
-}
-
-export interface ClickedCellMessage extends BaseMessage {
-  type: WebSocketServerAction.CELL_CLICKED;
+  type: WebSocketClientAction.CLICK_CELL | WebSocketServerAction.CELL_CLICKED;
   payload: {
     location: AreaLocation;
     player: PlayerInfo;
@@ -43,7 +35,7 @@ export interface ClickedCellMessage extends BaseMessage {
 }
 
 export interface PlayerJoinedMessage extends BaseMessage {
-  type: WebSocketServerAction.PLAYER_JOINED;
+  type: WebSocketServerAction.PLAYER_INFO;
   payload: {
     player: PlayerInfo;
   };
@@ -78,7 +70,6 @@ export type WebSocketMessage =
   | JoinGameMessage
   | StartGameMessage
   | ClickCellMessage
-  | ClickedCellMessage
   | PlayerJoinedMessage
   | UpdateRoomInformationMessage
   | RoomInformationMessage

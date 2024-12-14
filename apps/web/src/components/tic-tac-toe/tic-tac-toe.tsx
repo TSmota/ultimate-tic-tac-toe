@@ -17,12 +17,13 @@ function Area(props: PropsWithChildren) {
 
 interface TicTacToeProps {
   currentPlayer?: PlayerInfo;
+  disabled?: boolean;
   onClick: (area: AreaLocation) => void;
   selectedAreas?: SelectedArea[];
 }
 
 export function TicTacToe(props: TicTacToeProps) {
-  const { currentPlayer, onClick, selectedAreas } = props;
+  const { currentPlayer, disabled, onClick, selectedAreas } = props;
 
   const getBackgroundColor = (x: number, y: number) => {
     const selected = selectedAreas?.find((area) => area.location.x === x && area.location.y === y)
@@ -34,6 +35,14 @@ export function TicTacToe(props: TicTacToeProps) {
     return currentPlayer?.uuid === selected.player.uuid ? 'bg-green-500' : 'bg-red-400';
   }
 
+  const handleOnClick = (area: AreaLocation) => {
+    if (disabled) {
+      return;
+    }
+
+    onClick(area);
+  }
+
   return (
     <div className="grid grid-cols-3 m-4 w-fit">
       {areas.map((x) => (
@@ -42,10 +51,11 @@ export function TicTacToe(props: TicTacToeProps) {
             {areas.map((y) => (
               <Area key={y}>
                 <button
-                  className={cn('w-16 h-16 hover:bg-accent hover:cursor-pointer', {
+                  className={cn('w-16 h-16 [&:not([disabled])]:hover:bg-accent hover:cursor-pointer disabled:cursor-not-allowed', {
                     [getBackgroundColor(x, y)]: true,
                   })}
-                  onClick={() => { onClick({ x, y }); }}
+                  disabled={disabled}
+                  onClick={() => { handleOnClick({ x, y }) }}
                   type="button"
                 />
               </Area>

@@ -9,6 +9,7 @@ import {
   UpdateRoomInformationMessage,
   ClickCellMessage,
   PlayerInfo,
+  WebSocketCommonAction
 } from '@repo/commons';
 
 interface RoomState {
@@ -67,12 +68,14 @@ export class GameRoomSocketHandler {
   }
 
   handleMessage(parsedMessage: WebSocketMessage) {
-    console.log('Received message:', parsedMessage);
+    if (parsedMessage.type !== WebSocketCommonAction.KEEP_ALIVE) {
+      console.log('Received message:', parsedMessage);
+    }
     switch (parsedMessage.type) {
-      case WebSocketClientAction.KEEP_ALIVE:
+      case WebSocketCommonAction.KEEP_ALIVE:
         this.handleKeepAlive();
         break;
-      case WebSocketClientAction.JOIN_GAME:
+      case WebSocketClientAction.UPDATE_PLAYER_INFO:
         this.handlePlayerJoinGame(parsedMessage);
         break;
       case WebSocketClientAction.UPDATE_ROOM_INFORMATION:
@@ -101,7 +104,7 @@ export class GameRoomSocketHandler {
       JSON.stringify({
         broadcast: false,
         player: this.player,
-        type: WebSocketServerAction.KEEP_ALIVE,
+        type: WebSocketCommonAction.KEEP_ALIVE,
         topic: this.roomId,
       }),
     );
@@ -113,17 +116,18 @@ export class GameRoomSocketHandler {
 
     this.emitter.emit({
       broadcast: true,
-      type: WebSocketServerAction.PLAYER_JOINED,
+      type: WebSocketServerAction.PLAYER_INFO,
       topic: this.roomId,
       payload: {
         player: message.payload.player,
-      },
+      } as JoinGameMessage['payload'],
     });
   }
 
   handleUpdateRoomInformation(message: UpdateRoomInformationMessage) {
-    const payload = {
-      selectedAreas: message.payload.selectedAreas,
+    const payload: UpdateRoomInformationMessage['payload'] = {
+      gameInfo: message.payload.gameInfo,
+      gameStarted: message.payload.gameStarted,
       players: message.payload.players,
       variant: message.payload.variant,
     };
@@ -149,7 +153,7 @@ export class GameRoomSocketHandler {
       payload: {
         location: message.payload.location,
         player: message.payload.player,
-      },
+      } as ClickCellMessage['payload'],
     });
   }
 
@@ -160,7 +164,7 @@ export class GameRoomSocketHandler {
       topic: this.roomId,
       payload: {
         players: message.payload.players,
-      },
+      } as StartGameMessage['payload'],
     });
   }
 }

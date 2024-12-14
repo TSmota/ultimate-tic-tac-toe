@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
-import { type AreaLocation, PlayerInfo, type RoomInfo, WebSocketClientAction, WebSocketServerAction } from '@repo/commons';
+import { type AreaLocation, PlayerInfo, type RoomInfo, WebSocketClientAction, WebSocketCommonAction, WebSocketServerAction } from '@repo/commons';
 import { storageService } from '@src/services/storage';
 import { PLAYER_INFO_KEY, ROOM_INFO_KEY } from '@src/constants';
 import { TicTacToe } from '@src/components/tic-tac-toe/tic-tac-toe';
@@ -23,7 +23,6 @@ export default function GamePage(props: Props) {
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>();
   const [roomInfo, setRoomInfo] = useState<RoomInfo>();
 
-  const isConnected = useRef(false);
   const router = useRouter();
   const { lastJsonMessage, readyState, sendJsonMessage } = useRoomSocket();
 
@@ -50,36 +49,24 @@ export default function GamePage(props: Props) {
 
   useEffect(() => {
     if (readyState === ReadyState.CLOSED) {
-      router.push('/');
-    }
-
-    if (readyState !== ReadyState.OPEN || isConnected.current || !playerInfo) {
+      // TODO: Handle disconnect
+      console.log('Disconnected');
       return;
     }
 
-    isConnected.current = true;
+    if (readyState !== ReadyState.OPEN || !playerInfo) {
+      return;
+    }
 
     sendJsonMessage({
       broadcast: true,
-      type: WebSocketClientAction.JOIN_GAME,
+      type: WebSocketClientAction.UPDATE_PLAYER_INFO,
       topic: params.id,
       payload: {
         player: playerInfo,
       },
     });
-
-    const intervalId = setInterval(() => {
-      sendJsonMessage({
-        broadcast: false,
-        type: WebSocketClientAction.KEEP_ALIVE,
-        topic: params.id,
-      });
-    }, 5000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [readyState]);
+  }, [readyState, params, playerInfo]);
 
   useEffect(() => {
     if (!lastJsonMessage) {
@@ -87,23 +74,32 @@ export default function GamePage(props: Props) {
     }
 
     const { type, payload } = lastJsonMessage;
-    console.log('Received message:', lastJsonMessage);
 
     switch (type) {
-      case WebSocketServerAction.KEEP_ALIVE: {
+      case WebSocketCommonAction.KEEP_ALIVE: {
         break;
       }
-      case WebSocketServerAction.PLAYER_JOINED: {
-        const isNewPlayer = !roomInfo?.players.some((player) => player.uuid === payload.player.uuid);
-
+      case WebSocketServerAction.PLAYER_INFO: {
         if (playerInfo?.isHost && roomInfo) {
+          const isNewPlayer = !roomInfo.players.some((player) => player.uuid === payload.player.uuid);
+
+          const players = isNewPlayer
+            ? [...roomInfo.players, payload.player]
+            : roomInfo.players.map(player => {
+              if (player.uuid === payload.player.uuid) {
+                return payload.player;
+              }
+
+              return player;
+            });
+
           sendJsonMessage({
             broadcast: true,
             type: WebSocketClientAction.UPDATE_ROOM_INFORMATION,
             topic: params.id,
             payload: {
               ...roomInfo,
-              players: isNewPlayer ? [...roomInfo.players, payload.player] : roomInfo.players,
+              players,
             } as RoomInfo,
           });
         }
