@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
-import { type AreaLocation, PlayerInfo, type RoomInfo, WebSocketClientAction, WebSocketCommonAction, WebSocketServerAction } from '@repo/commons';
+import { type AreaLocation, getTeamTurn, PlayerInfo, type RoomInfo, WebSocketClientAction, WebSocketCommonAction, WebSocketServerAction } from '@repo/commons';
 import { storageService } from '@src/services/storage';
 import { PLAYER_INFO_KEY, ROOM_INFO_KEY } from '@src/constants';
 import { TicTacToe } from '@src/components/tic-tac-toe/tic-tac-toe';
@@ -28,6 +28,11 @@ export default function GamePage(props: Props) {
 
   const router = useRouter();
   const { lastJsonMessage, readyState, sendJsonMessage } = useRoomSocket();
+
+  const updatePlayerInfo = (info: PlayerInfo) => {
+    setPlayerInfo(info);
+    storageService.setItem(`${params.id}-${PLAYER_INFO_KEY}`, info);
+  }
 
   const updateRoomInfo = (info: RoomInfo) => {
     setRoomInfo(info);
@@ -143,7 +148,11 @@ export default function GamePage(props: Props) {
     }
   }, [lastJsonMessage]);
 
-  const players = roomInfo?.players ?? [];
+  if (isLoadingInformation || !roomInfo) {
+    return <Loader className="animate-spin" />;
+  }
+
+  const players = roomInfo.players ?? [];
   const canStart = playerInfo?.isHost
     && players?.length
     && players[0]?.team
@@ -182,21 +191,17 @@ export default function GamePage(props: Props) {
   };
 
   const onSelectTeam = (team: 'X' | 'O') => {
-    setPlayerInfo(oldPlayerInfo => {
-      if (!oldPlayerInfo) {
-        return oldPlayerInfo;
-      }
+    if (!playerInfo) {
+      return;
+    }
 
-      return {
-        ...oldPlayerInfo,
-        team,
-      };
+    updatePlayerInfo({
+      ...playerInfo,
+      team,
     });
   };
 
-  if (isLoadingInformation) {
-    return <Loader className="animate-spin" />;
-  }
+  const teamTurn = getTeamTurn(roomInfo.gameInfo);
 
   return (
     <div className="flex flex-col items-center gap-8">
@@ -229,9 +234,12 @@ export default function GamePage(props: Props) {
         <Button disabled={!canStart} onClick={startGame}>Start Game</Button>
       </div>
 
+      <p>Team turn: {teamTurn}</p>
+
       {roomInfo?.gameStarted && (
         <TicTacToe
           currentPlayer={playerInfo}
+          disabled={teamTurn !== playerInfo?.team}
           onClick={onClick}
           selectedAreas={roomInfo?.gameInfo?.selectedAreas}
         />

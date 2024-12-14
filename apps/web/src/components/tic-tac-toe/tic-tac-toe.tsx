@@ -1,6 +1,6 @@
 'use client';
 
-import { PlayerInfo, SelectedArea, type AreaLocation } from "@repo/commons";
+import { isAreaDisabled, PlayerInfo, SelectedArea, type AreaLocation } from "@repo/commons";
 import { type PropsWithChildren } from "react";
 import { cn } from "@src/lib/utils";
 
@@ -23,23 +23,19 @@ interface TicTacToeProps {
 }
 
 export function TicTacToe(props: TicTacToeProps) {
-  const { currentPlayer, disabled, onClick, selectedAreas } = props;
+  const { currentPlayer, disabled, onClick, selectedAreas = [] } = props;
 
   const getBackgroundColor = (x: number, y: number) => {
-    const selected = selectedAreas?.find((area) => area.location.x === x && area.location.y === y)
+    const selected = selectedAreas.find((area) => area.location.x === x && area.location.y === y)
 
     if (!selected) {
-      return '';
+      return 'disabled:bg-[#fff2]';
     }
 
     return currentPlayer?.uuid === selected.player.uuid ? 'bg-green-500' : 'bg-red-400';
   }
 
   const handleOnClick = (area: AreaLocation) => {
-    if (disabled) {
-      return;
-    }
-
     onClick(area);
   }
 
@@ -54,7 +50,7 @@ export function TicTacToe(props: TicTacToeProps) {
                   className={cn('w-16 h-16 [&:not([disabled])]:hover:bg-accent hover:cursor-pointer disabled:cursor-not-allowed', {
                     [getBackgroundColor(x, y)]: true,
                   })}
-                  disabled={disabled}
+                  disabled={disabled || isAreaDisabled({ x, y }, selectedAreas)}
                   onClick={() => { handleOnClick({ x, y }) }}
                   type="button"
                 />

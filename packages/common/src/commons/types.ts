@@ -1,5 +1,7 @@
 import { GameVariant } from "./game-variants";
 
+export type Team = 'X' | 'O';
+
 export type AreaLocation = {
   x: number;
   y: number;
@@ -7,7 +9,7 @@ export type AreaLocation = {
 
 export interface PlayerInfo {
   isHost?: boolean;
-  team?: 'X' | 'O';
+  team?: Team;
   username: string;
   uuid: string;
 }
