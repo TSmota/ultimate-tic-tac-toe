@@ -9,6 +9,9 @@ import { TicTacToe } from '@src/components/tic-tac-toe/tic-tac-toe';
 import { useRoomSocket } from './room-socket-context';
 import { Loader } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@src/components/ui/button';
+import { ToggleGroup, ToggleGroupItem } from '@src/components/ui/toggle-group';
+import { CircleIcon, XIcon } from 'lucide-react';
 
 interface Props {
   params: {
@@ -110,11 +113,25 @@ export default function GamePage(props: Props) {
         setIsLoadingInformation(false);
         break;
       }
+      case WebSocketServerAction.GAME_STARTED: {
+        if (!roomInfo) {
+          return;
+        }
+
+        updateRoomInfo({
+          ...roomInfo,
+          gameStarted: true,
+        });
+        break;
+      }
       case WebSocketServerAction.CELL_CLICKED: {
-        if (roomInfo) {
+        if (roomInfo?.gameInfo) {
           updateRoomInfo({
             ...roomInfo,
-            selectedAreas: [...roomInfo.selectedAreas ?? [], payload],
+            gameInfo: {
+              ...roomInfo.gameInfo,
+              selectedAreas: [...roomInfo.gameInfo.selectedAreas, payload],
+            }
           });
         }
         break;
@@ -125,6 +142,28 @@ export default function GamePage(props: Props) {
         break;
     }
   }, [lastJsonMessage]);
+
+  const players = roomInfo?.players ?? [];
+  const canStart = playerInfo?.isHost
+    && players?.length
+    && players[0]?.team
+    && players[1]?.team
+    && players[0].team !== players[1].team;
+
+  const startGame = () => {
+    if (!canStart) {
+      return;
+    }
+
+    sendJsonMessage({
+      broadcast: true,
+      type: WebSocketClientAction.START_GAME,
+      topic: params.id,
+      payload: {
+        players,
+      },
+    });
+  }
 
   const onClick = (location: AreaLocation) => {
     if (!playerInfo) {
@@ -142,23 +181,61 @@ export default function GamePage(props: Props) {
     });
   };
 
+  const onSelectTeam = (team: 'X' | 'O') => {
+    setPlayerInfo(oldPlayerInfo => {
+      if (!oldPlayerInfo) {
+        return oldPlayerInfo;
+      }
+
+      return {
+        ...oldPlayerInfo,
+        team,
+      };
+    });
+  };
+
   if (isLoadingInformation) {
     return <Loader className="animate-spin" />;
   }
 
   return (
-    <div>
+    <div className="flex flex-col items-center gap-8">
       <p>
         {params.id} {roomInfo ? `- Game mode: ${roomInfo.variant}` : null}
       </p>
-      <br />
-      {roomInfo?.players.map((player) => (
-        <p key={player.uuid}>{player.username} {player.uuid}</p>
-      ))}
-      <TicTacToe currentPlayer={playerInfo} onClick={onClick} selectedAreas={roomInfo?.selectedAreas} />
-      {roomInfo?.selectedAreas?.map((play) => (
-        <p key={`${play.location.x} - ${play.location.y}`}>{`${play.player.username}: ${play.location.x} - ${play.location.y}`}</p>
-      ))}
+
+      <div className="flex justify-between w-[80%]">
+        <div className="flex flex-col gap-1">
+          <p>Players</p>
+
+          {roomInfo?.players.map((player) => (
+            <p key={player.uuid}>{player.username} {player.team}</p>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <p>Select your team</p>
+
+          <ToggleGroup onValueChange={onSelectTeam} type="single" value={playerInfo?.team} variant="outline">
+            <ToggleGroupItem value="O" aria-label="Circle team">
+              <CircleIcon className="h-4 w-4" />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="X" aria-label="X team">
+              <XIcon className="h-4 w-4" />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
+        <Button disabled={!canStart} onClick={startGame}>Start Game</Button>
+      </div>
+
+      {roomInfo?.gameStarted && (
+        <TicTacToe
+          currentPlayer={playerInfo}
+          onClick={onClick}
+          selectedAreas={roomInfo?.gameInfo?.selectedAreas}
+        />
+      )}
     </div>
   );
 }
