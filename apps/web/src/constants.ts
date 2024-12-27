@@ -8,7 +8,7 @@ export const host = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : `http://localhost:${port}`;
 
-export const WS_ENDPOINT = process.env.WS_ENDPOINT ?? 'ws://localhost:3333/socket';
+export const WS_ENDPOINT = process.env.NEXT_PUBLIC_WS_ENDPOINT ?? 'ws://localhost:3333/socket';
 
 export const PLAYER_INFO_KEY = 'player-info';
 
