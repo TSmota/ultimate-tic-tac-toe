@@ -7,5 +7,5 @@ export function isAreaDisabled(location: AreaLocation, selectedAreas: SelectedAr
 
   const lastMove = selectedAreas[selectedAreas.length - 1];
 
-  return location.x !== lastMove?.location.y;
+  return location.x !== lastMove?.location.y || selectedAreas.some((area) => area.location.x === location.x && area.location.y === location.y);
 }

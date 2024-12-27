@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
-import { type AreaLocation, getTeamTurn, PlayerInfo, type RoomInfo, WebSocketClientAction, WebSocketCommonAction, WebSocketServerAction } from '@repo/commons';
+import { type AreaLocation, getTeamTurn, PlayerInfo, type RoomInfo, WebSocketClientAction, WebSocketServerAction } from '@repo/commons';
 import { storageService } from '@src/services/storage';
 import { PLAYER_INFO_KEY, ROOM_INFO_KEY } from '@src/constants';
-import { TicTacToe } from '@src/components/tic-tac-toe/tic-tac-toe';
+import { UltimateTicTacToe } from '@src/components/tic-tac-toe/ultimate-tic-tac-toe';
 import { useRoomSocket } from './room-socket-context';
 import { Loader } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -43,15 +43,16 @@ export default function GamePage(props: Props) {
 
   useEffect(() => {
     const localRoomInfo = storageService.getItem<RoomInfo>(`${params.id}-${ROOM_INFO_KEY}`);
-    const localPlayerInfo = storageService.getItem<PlayerInfo>(PLAYER_INFO_KEY);
+    const localPlayerInfo = storageService.getItem<PlayerInfo>(`${params.id}-${PLAYER_INFO_KEY}`);
 
     if (!localPlayerInfo) {
       router.push('/');
+      return;
     }
 
     setPlayerInfo(localPlayerInfo);
 
-    if (localPlayerInfo?.isHost && localRoomInfo) {
+    if (localRoomInfo && localPlayerInfo.uuid === localRoomInfo.host) {
       setRoomInfo(localRoomInfo);
       setIsLoadingInformation(false);
     }
@@ -86,11 +87,8 @@ export default function GamePage(props: Props) {
     const { type, payload } = lastJsonMessage;
 
     switch (type) {
-      case WebSocketCommonAction.KEEP_ALIVE: {
-        break;
-      }
       case WebSocketServerAction.PLAYER_INFO: {
-        if (playerInfo?.isHost && roomInfo) {
+        if (roomInfo && roomInfo.host === playerInfo?.uuid) {
           const isNewPlayer = !roomInfo.players.some((player) => player.uuid === payload.player.uuid);
 
           const players = isNewPlayer
@@ -238,13 +236,16 @@ export default function GamePage(props: Props) {
       </div>
 
 
-      {roomInfo?.gameStarted && (
-        <TicTacToe
-          currentPlayer={playerInfo}
-          disabled={teamTurn !== playerInfo?.team}
-          onClick={onClick}
-          selectedAreas={roomInfo?.gameInfo?.selectedAreas}
-        />
+      {roomInfo.gameStarted && (
+        <>
+          <p>{t('teamTurn', { team: teamTurn })}</p>
+          <UltimateTicTacToe
+            currentPlayer={playerInfo}
+            disabled={teamTurn !== playerInfo?.team}
+            onClick={onClick}
+            selectedAreas={roomInfo.gameInfo?.selectedAreas}
+          />
+        </>
       )}
     </div>
   );

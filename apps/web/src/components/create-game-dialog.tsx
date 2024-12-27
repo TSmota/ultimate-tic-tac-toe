@@ -15,13 +15,12 @@ import {
   FormLabel,
   FormControl,
   Form,
-  FormDescription,
   FormMessage,
 } from '@src/components/ui/form';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@src/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Button } from './ui/button';
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 
 interface CreateGameDialogProps {
   open?: boolean;
@@ -65,11 +64,12 @@ export function CreateGameDialog(props: CreateGameDialogProps) {
   }, [form]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    storageService.setItem(PLAYER_INFO_KEY, {
-      uuid: uuid(),
-      isHost: true,
+    const playerInfo: PlayerInfo = {
+      uuid: uuidv4(),
       username: data.username,
-    } as PlayerInfo);
+    };
+
+    storageService.setItem(PLAYER_INFO_KEY, playerInfo);
 
     const gameCode = generateGameCode();
 
@@ -77,6 +77,7 @@ export function CreateGameDialog(props: CreateGameDialogProps) {
       gameInfo: {
         selectedAreas: [],
       },
+      host: playerInfo.uuid,
       variant: data.variant,
       players: [],
     } as RoomInfo);
@@ -114,7 +115,7 @@ export function CreateGameDialog(props: CreateGameDialogProps) {
                 <FormItem>
                   <FormLabel>{t('fields.variant.label')}</FormLabel>
 
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select disabled onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue />
@@ -122,28 +123,22 @@ export function CreateGameDialog(props: CreateGameDialogProps) {
                     </FormControl>
                     <SelectContent>
                       <SelectItem value={GameVariant.CLASSIC}>{t('fields.variant.options.classic')}</SelectItem>
+                      {/* TODO: Add these variants later
                       <SelectItem value={GameVariant.UNLOCKED}>
                         {t('fields.variant.options.unlocked')}
                       </SelectItem>
-                      <SelectItem value={GameVariant.CONQUER}>{t('fields.variant.options.conquer')}</SelectItem>
+                      <SelectItem value={GameVariant.CONQUER}>{t('fields.variant.options.conquer')}</SelectItem> */}
                     </SelectContent>
                   </Select>
 
-                  <FormDescription className="whitespace-break-spaces">
+                  {/* <FormDescription className="whitespace-break-spaces">
                     {t('fields.variant.description')}
-                  </FormDescription>
+                  </FormDescription> */}
 
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-            {/* TODO: Future fields:
-                - Person limit (for live watching)
-                - 1v1 or tournament
-                - For unlocked: number of initial moves
-                - Time limit per move
-              */}
 
             <Button className="self-end" type="submit">
               {t('submit')}

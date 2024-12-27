@@ -3,6 +3,7 @@ import fastifyWebSocket from '@fastify/websocket';
 import cors from '@fastify/cors';
 import mq from 'mqemitter';
 import { GameRoomSocketHandler } from './handlers/game-room-socket-handler';
+import { RoomState } from './types';
 
 const server = Fastify();
 const emitter = mq();
@@ -18,11 +19,6 @@ type RoomConnectRequest = {
     room: string;
   };
 };
-
-type RoomState = {
-  room: string;
-  players: number;
-}
 
 const rooms = new Map<string, RoomState>();
 

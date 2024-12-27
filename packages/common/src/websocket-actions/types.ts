@@ -2,14 +2,14 @@ import { AreaLocation, PlayerInfo, RoomInfo } from '../commons/types';
 import { WebSocketClientAction, WebSocketCommonAction, WebSocketServerAction } from './constants';
 
 interface BaseMessage {
-  broadcast: boolean;
+  broadcast?: boolean;
   type: WebSocketCommonAction | WebSocketClientAction | WebSocketServerAction;
   topic: string;
 }
 
 export interface KeepAliveMessage extends BaseMessage {
   type: WebSocketCommonAction.KEEP_ALIVE;
-  payload?: never;
+  payload: string;
 }
 
 export interface JoinGameMessage extends BaseMessage {

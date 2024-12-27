@@ -8,7 +8,6 @@ export type AreaLocation = {
 }
 
 export interface PlayerInfo {
-  isHost?: boolean;
   team?: Team;
   username: string;
   uuid: string;
@@ -27,6 +26,7 @@ export interface GameInfo {
 export interface RoomInfo {
   gameStarted?: boolean;
   gameInfo: GameInfo;
+  host: string;
   players: PlayerInfo[];
   variant: GameVariant;
 }

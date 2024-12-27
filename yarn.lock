@@ -1862,13 +1862,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:8.3.4":
-  version: 8.3.4
-  resolution: "@types/uuid@npm:8.3.4"
-  checksum: 10c0/b9ac98f82fcf35962317ef7dc44d9ac9e0f6fdb68121d384c88fe12ea318487d5585d3480fa003cf28be86a3bbe213ca688ba786601dce4a97724765eb5b1cf2
-  languageName: node
-  linkType: hard
-
 "@types/ws@npm:8.5.12":
   version: 8.5.12
   resolution: "@types/ws@npm:8.5.12"
@@ -7696,22 +7689,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:8.3.2":
-  version: 8.3.2
-  resolution: "uuid@npm:8.3.2"
+"uuid@npm:11.0.3":
+  version: 11.0.3
+  resolution: "uuid@npm:11.0.3"
   bin:
-    uuid: dist/bin/uuid
-  checksum: 10c0/bcbb807a917d374a49f475fae2e87fdca7da5e5530820ef53f65ba1d12131bd81a92ecf259cc7ce317cbe0f289e7d79fdfebcef9bfa3087c8c8a2fa304c9be54
-  languageName: node
-  linkType: hard
-
-"uuidv4@npm:6.2.13":
-  version: 6.2.13
-  resolution: "uuidv4@npm:6.2.13"
-  dependencies:
-    "@types/uuid": "npm:8.3.4"
-    uuid: "npm:8.3.2"
-  checksum: 10c0/33287c7c71e19c5a9fe0d936c0df648338965442c80b5b26e51c13ec9a9c524a72c718355e0cea8a9431a78680d72a41a236b87046ecc0a05f518c8e22df9e35
+    uuid: dist/esm/bin/uuid
+  checksum: 10c0/cee762fc76d949a2ff9205770334699e0043d52bb766472593a25f150077c9deed821230251ea3d6ab3943a5ea137d2826678797f1d5f6754c7ce5ce27e9f7a6
   languageName: node
   linkType: hard
 
@@ -7762,7 +7745,7 @@ __metadata:
     tailwindcss: "npm:3.4.14"
     tailwindcss-animate: "npm:1.0.7"
     typescript: "npm:5.6.3"
-    uuidv4: "npm:6.2.13"
+    uuid: "npm:11.0.3"
     zod: "npm:3.23.8"
   languageName: unknown
   linkType: soft

@@ -1,21 +1,21 @@
 import { Message, MQEmitter } from 'mqemitter';
 import type { WebSocket } from 'ws';
 import {
-  WebSocketMessage,
+  type WebSocketMessage,
   WebSocketClientAction,
   WebSocketServerAction,
-  JoinGameMessage,
-  StartGameMessage,
-  UpdateRoomInformationMessage,
-  ClickCellMessage,
-  PlayerInfo,
-  WebSocketCommonAction
+  type JoinGameMessage,
+  type StartGameMessage,
+  type UpdateRoomInformationMessage,
+  type ClickCellMessage,
+  type PlayerInfo,
+  WebSocketCommonAction,
+  type KeepAliveMessage,
+  type PlayerJoinedMessage,
+  type GameStartedMessage,
+  type RoomInformationMessage
 } from '@repo/commons';
-
-interface RoomState {
-  room: string;
-  players: number;
-}
+import { RoomState } from '../types';
 
 export class GameRoomSocketHandler {
   static KEEP_ALIVE_TIMEOUT = 15 * 1000;
@@ -38,7 +38,7 @@ export class GameRoomSocketHandler {
     this.socket.on('close', () => {
       this.emitter.removeListener(this.roomId, this.listener);
 
-      if (this.player?.isHost) {
+      if (this.player?.uuid === this.rooms.get(this.roomId)?.host) {
         this.rooms.delete(this.roomId);
       }
     });
@@ -102,11 +102,10 @@ export class GameRoomSocketHandler {
 
     this.socket.send(
       JSON.stringify({
-        broadcast: false,
-        player: this.player,
         type: WebSocketCommonAction.KEEP_ALIVE,
         topic: this.roomId,
-      }),
+        payload: 'pong',
+      } as KeepAliveMessage),
     );
   }
 
@@ -120,14 +119,15 @@ export class GameRoomSocketHandler {
       topic: this.roomId,
       payload: {
         player: message.payload.player,
-      } as JoinGameMessage['payload'],
-    });
+      },
+    } as PlayerJoinedMessage);
   }
 
   handleUpdateRoomInformation(message: UpdateRoomInformationMessage) {
-    const payload: UpdateRoomInformationMessage['payload'] = {
+    const payload: RoomInformationMessage['payload'] = {
       gameInfo: message.payload.gameInfo,
       gameStarted: message.payload.gameStarted,
+      host: message.payload.host,
       players: message.payload.players,
       variant: message.payload.variant,
     };
@@ -137,9 +137,10 @@ export class GameRoomSocketHandler {
       type: WebSocketServerAction.ROOM_INFORMATION,
       topic: this.roomId,
       payload,
-    });
+    } as RoomInformationMessage);
 
     this.rooms.set(this.roomId, {
+      host: payload.host,
       room: payload.variant,
       players: payload.players.length,
     });
@@ -153,8 +154,8 @@ export class GameRoomSocketHandler {
       payload: {
         location: message.payload.location,
         player: message.payload.player,
-      } as ClickCellMessage['payload'],
-    });
+      },
+    } as ClickCellMessage);
   }
 
   handleStartGame(message: StartGameMessage) {
@@ -164,7 +165,7 @@ export class GameRoomSocketHandler {
       topic: this.roomId,
       payload: {
         players: message.payload.players,
-      } as StartGameMessage['payload'],
-    });
+      },
+    } as GameStartedMessage);
   }
 }

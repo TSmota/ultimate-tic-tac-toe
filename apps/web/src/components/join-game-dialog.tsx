@@ -19,7 +19,7 @@ import {
 } from '@src/components/ui/form';
 import { Dialog, DialogContent } from '@src/components/ui/dialog';
 import { Button } from './ui/button';
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 
 interface JoinGameDialogProps {
   open?: boolean;
@@ -65,7 +65,7 @@ export function JoinGameDialog(props: JoinGameDialogProps) {
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     storageService.setItem(PLAYER_INFO_KEY, {
-      uuid: uuid(),
+      uuid: uuidv4(),
       isHost: false,
       username: data.username,
     });

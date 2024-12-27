@@ -3,11 +3,11 @@
 class StorageService {
   setItem<T = unknown>(key: string, value: T): void {
     const serializedValue = JSON.stringify(value);
-    sessionStorage.setItem(key, serializedValue);
+    localStorage.setItem(key, serializedValue);
   }
 
   getItem<T>(key: string): T | undefined {
-    const serializedValue = sessionStorage.getItem(key);
+    const serializedValue = localStorage.getItem(key);
 
     if (serializedValue === null) {
       return undefined;
@@ -17,7 +17,7 @@ class StorageService {
   }
 
   removeItem(key: string): void {
-    sessionStorage.removeItem(key);
+    localStorage.removeItem(key);
   }
 }
 
