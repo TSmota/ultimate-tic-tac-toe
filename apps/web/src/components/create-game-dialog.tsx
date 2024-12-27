@@ -21,6 +21,7 @@ import {
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@src/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Button } from './ui/button';
+import { uuid } from 'uuidv4';
 
 interface CreateGameDialogProps {
   open?: boolean;
@@ -65,7 +66,7 @@ export function CreateGameDialog(props: CreateGameDialogProps) {
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     storageService.setItem(PLAYER_INFO_KEY, {
-      uuid: crypto.randomUUID(),
+      uuid: uuid(),
       isHost: true,
       username: data.username,
     } as PlayerInfo);
