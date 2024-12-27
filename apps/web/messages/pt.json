@@ -75,5 +75,11 @@
       "system": "Sistema",
       "toggle": "Alternar tema"
     }
+  },
+  "game": {
+    "players": "Jogadores",
+    "selectTeam": "Escolha seu time",
+    "startGame": "Iniciar jogo",
+    "teamTurn": "Vez de {team}"
   }
 }

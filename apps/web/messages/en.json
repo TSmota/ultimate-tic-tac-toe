@@ -71,5 +71,11 @@
       "system": "System",
       "toggle": "Toggle theme"
     }
+  },
+  "game": {
+    "players": "Players",
+    "selectTeam": "Select your team",
+    "startGame": "Start game",
+    "teamTurn": "{team} turn"
   }
 }

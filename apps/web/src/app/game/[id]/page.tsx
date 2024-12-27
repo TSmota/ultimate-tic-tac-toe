@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@src/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@src/components/ui/toggle-group';
 import { CircleIcon, XIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   params: {
@@ -25,6 +26,7 @@ export default function GamePage(props: Props) {
   const [isLoadingInformation, setIsLoadingInformation] = useState(true);
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>();
   const [roomInfo, setRoomInfo] = useState<RoomInfo>();
+  const t = useTranslations('game');
 
   const router = useRouter();
   const { lastJsonMessage, readyState, sendJsonMessage } = useRoomSocket();
@@ -153,8 +155,9 @@ export default function GamePage(props: Props) {
   }
 
   const players = roomInfo.players ?? [];
-  const canStart = playerInfo?.isHost
-    && players?.length
+  const canStart = !roomInfo.gameStarted
+    && playerInfo?.uuid === roomInfo.host
+    && players?.length === 2
     && players[0]?.team
     && players[1]?.team
     && players[0].team !== players[1].team;
@@ -205,36 +208,35 @@ export default function GamePage(props: Props) {
 
   return (
     <div className="flex flex-col items-center gap-8">
-      <p>
-        {params.id} {roomInfo ? `- Game mode: ${roomInfo.variant}` : null}
+      <p> {/* TODO: Change this */}
+        {params.id} {`- Game mode: ${roomInfo.variant}`}
       </p>
 
       <div className="flex justify-between w-[80%]">
         <div className="flex flex-col gap-1">
-          <p>Players</p>
+          <p>{t('players')}</p>
 
-          {roomInfo?.players.map((player) => (
+          {roomInfo.players.map((player) => (
             <p key={player.uuid}>{player.username} {player.team}</p>
           ))}
         </div>
 
         <div className="flex flex-col gap-1">
-          <p>Select your team</p>
+          <p>{t('selectTeam')}</p>
 
-          <ToggleGroup onValueChange={onSelectTeam} type="single" value={playerInfo?.team} variant="outline">
+          <ToggleGroup disabled={roomInfo.gameStarted} onValueChange={onSelectTeam} type="single" value={playerInfo?.team} variant="outline">
             <ToggleGroupItem value="O" aria-label="Circle team">
-              <CircleIcon className="h-4 w-4" />
+              <CircleIcon />
             </ToggleGroupItem>
             <ToggleGroupItem value="X" aria-label="X team">
-              <XIcon className="h-4 w-4" />
+              <XIcon />
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
 
-        <Button disabled={!canStart} onClick={startGame}>Start Game</Button>
+        <Button disabled={!canStart} onClick={startGame}>{t('startGame')}</Button>
       </div>
 
-      <p>Team turn: {teamTurn}</p>
 
       {roomInfo?.gameStarted && (
         <TicTacToe
