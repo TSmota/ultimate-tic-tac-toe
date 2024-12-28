@@ -12,27 +12,30 @@ export default function HomePage() {
   const [option, setOption] = useState('');
 
   return (
-    <div className="flex flex-col gap-12 p-20">
+    <div className="flex flex-col gap-12 p-20 size-full text-center">
       <h1 className="text-6xl font-semibold">{t('title')}</h1>
       <div className="flex flex-col gap-8">
-        <div
-          className="text-3xl hover:cursor-pointer hover:font-semibold"
+        <button
+          className="size-2/6 text-3xl m-auto p-4 hover:cursor-pointer hover:outline"
           onClick={() => { setOption('create'); }}
+          type="button"
         >
           {t('createGame')}
-        </div>
-        <div
-          className="text-3xl hover:cursor-pointer hover:font-semibold"
+        </button>
+        <button
+          className="size-2/6 text-3xl m-auto p-4 hover:cursor-pointer hover:outline"
           onClick={() => { setOption('join'); }}
+          type="button"
         >
           {t('joinGame')}
-        </div>
-        <div
-          className="text-3xl hover:cursor-pointer hover:font-semibold"
+        </button>
+        <button
+          className="size-2/6 text-3xl m-auto p-4 hover:cursor-pointer hover:outline"
           onClick={() => { setOption('about'); }}
+          type="button"
         >
           {t('about')}
-        </div>
+        </button>
       </div>
 
       <CreateGameDialog

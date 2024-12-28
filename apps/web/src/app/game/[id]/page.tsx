@@ -43,7 +43,7 @@ export default function GamePage(props: Props) {
 
   useEffect(() => {
     const localRoomInfo = storageService.getItem<RoomInfo>(`${params.id}-${ROOM_INFO_KEY}`);
-    const localPlayerInfo = storageService.getItem<PlayerInfo>(`${params.id}-${PLAYER_INFO_KEY}`);
+    const localPlayerInfo = storageService.getItem<PlayerInfo>(PLAYER_INFO_KEY);
 
     if (!localPlayerInfo) {
       router.push('/');

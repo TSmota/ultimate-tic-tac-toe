@@ -5,7 +5,11 @@ import mq from 'mqemitter';
 import { GameRoomSocketHandler } from './handlers/game-room-socket-handler';
 import { RoomState } from './types';
 
-const server = Fastify();
+const server = Fastify({
+  logger: {
+    level: 'info',
+  },
+});
 const emitter = mq();
 
 server.register(cors, {
@@ -44,14 +48,12 @@ server.register(async function (fastify) {
 
 const start = async () => {
   try {
-    const address = await server.listen({
-      port: process.env.PORT ? parseInt(process.env.PORT) : 3333,
+    await server.listen({
+      port: process.env.PORT ? Number(process.env.PORT) : 3333,
       host: '0.0.0.0',
     });
-
-    console.log(`Server listening at: ${address}`);
   } catch (err) {
-    server.log.error(err);
+    server.log.fatal(err);
     process.exit(1);
   }
 };
