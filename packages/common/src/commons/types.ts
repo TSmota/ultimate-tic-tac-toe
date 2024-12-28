@@ -19,6 +19,9 @@ export interface SelectedArea {
 }
 
 export interface GameInfo {
+  boardWinners?: Record<number, Team>;
+  currentBoard?: number;
+  gameWinner?: Team;
   players?: [PlayerInfo, PlayerInfo];
   selectedAreas: SelectedArea[];
 }

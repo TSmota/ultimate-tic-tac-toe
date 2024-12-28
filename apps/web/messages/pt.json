@@ -80,6 +80,8 @@
     "players": "Jogadores",
     "selectTeam": "Escolha seu time",
     "startGame": "Iniciar jogo",
-    "teamTurn": "Vez de {team}"
+    "playAgain": "Jogar novamente",
+    "teamTurn": "Vez de {team}",
+    "gameWinner": "{team} venceu!"
   }
 }

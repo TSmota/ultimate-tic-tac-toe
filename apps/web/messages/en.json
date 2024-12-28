@@ -76,6 +76,8 @@
     "players": "Players",
     "selectTeam": "Select your team",
     "startGame": "Start game",
-    "teamTurn": "{team} turn"
+    "playAgain": "Play again",
+    "teamTurn": "{team} turn",
+    "gameWinner": "{team} wins!"
   }
 }

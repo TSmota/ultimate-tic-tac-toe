@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
-import { type AreaLocation, getTeamTurn, PlayerInfo, type RoomInfo, WebSocketClientAction, WebSocketServerAction } from '@repo/commons';
+import { type AreaLocation, checkBoardWin, getTeamTurn, isDefined, PlayerInfo, type RoomInfo, Team, WebSocketClientAction, WebSocketServerAction } from '@repo/commons';
 import { storageService } from '@src/services/storage';
 import { PLAYER_INFO_KEY, ROOM_INFO_KEY } from '@src/constants';
 import { UltimateTicTacToe } from '@src/components/tic-tac-toe/ultimate-tic-tac-toe';
@@ -13,6 +13,7 @@ import { Button } from '@src/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@src/components/ui/toggle-group';
 import { CircleIcon, XIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { cn } from '@src/lib/utils';
 
 interface Props {
   params: {
@@ -31,9 +32,11 @@ export default function GamePage(props: Props) {
   const router = useRouter();
   const { lastJsonMessage, readyState, sendJsonMessage } = useRoomSocket();
 
+  const isRoomHost = roomInfo?.host === playerInfo?.uuid;
+
   const updatePlayerInfo = (info: PlayerInfo) => {
     setPlayerInfo(info);
-    storageService.setItem(`${params.id}-${PLAYER_INFO_KEY}`, info);
+    storageService.setItem(PLAYER_INFO_KEY, info);
   }
 
   const updateRoomInfo = (info: RoomInfo) => {
@@ -88,7 +91,7 @@ export default function GamePage(props: Props) {
 
     switch (type) {
       case WebSocketServerAction.PLAYER_INFO: {
-        if (roomInfo && roomInfo.host === playerInfo?.uuid) {
+        if (roomInfo && isRoomHost) {
           const isNewPlayer = !roomInfo.players.some((player) => player.uuid === payload.player.uuid);
 
           const players = isNewPlayer
@@ -125,17 +128,45 @@ export default function GamePage(props: Props) {
 
         updateRoomInfo({
           ...roomInfo,
+          gameInfo: {
+            selectedAreas: [],
+          },
           gameStarted: true,
         });
         break;
       }
       case WebSocketServerAction.CELL_CLICKED: {
         if (roomInfo?.gameInfo) {
+          const selectedAreas = [...roomInfo.gameInfo.selectedAreas, payload];
+
+          const clickedCellBoardAreas = selectedAreas.filter((area) => area.location.x === payload.location.x);
+          const teamAreas = clickedCellBoardAreas.filter((area) => area.player.team === payload.player.team);
+
+          const wonBoardGame = checkBoardWin(teamAreas.map((area) => area.location.y));
+          const boardWinners = roomInfo.gameInfo.boardWinners ?? {};
+
+          let gameWinner: Team | undefined = undefined;
+
+          if (wonBoardGame && payload.player.team) {
+            boardWinners[payload.location.x] = payload.player.team;
+
+            const teamBoards = Object.entries(boardWinners).filter(([, team]) => team === payload.player.team).map(([n]) => Number(n));
+
+            if (checkBoardWin(teamBoards)) {
+              gameWinner = payload.player.team;
+            }
+          }
+
+          const nextBoard = boardWinners[payload.location.y] ? undefined : payload.location.y;
+
           updateRoomInfo({
             ...roomInfo,
             gameInfo: {
               ...roomInfo.gameInfo,
-              selectedAreas: [...roomInfo.gameInfo.selectedAreas, payload],
+              boardWinners,
+              gameWinner,
+              currentBoard: nextBoard,
+              selectedAreas,
             }
           });
         }
@@ -154,17 +185,13 @@ export default function GamePage(props: Props) {
 
   const players = roomInfo.players ?? [];
   const canStart = !roomInfo.gameStarted
-    && playerInfo?.uuid === roomInfo.host
+    && isRoomHost
     && players?.length === 2
     && players[0]?.team
     && players[1]?.team
     && players[0].team !== players[1].team;
 
   const startGame = () => {
-    if (!canStart) {
-      return;
-    }
-
     sendJsonMessage({
       broadcast: true,
       type: WebSocketClientAction.START_GAME,
@@ -210,7 +237,7 @@ export default function GamePage(props: Props) {
         {params.id} {`- Game mode: ${roomInfo.variant}`}
       </p>
 
-      <div className="flex justify-between w-[80%]">
+      <div className={cn('flex justify-between w-[80%]', { 'hidden': roomInfo.gameStarted })}>
         <div className="flex flex-col gap-1">
           <p>{t('players')}</p>
 
@@ -236,14 +263,22 @@ export default function GamePage(props: Props) {
       </div>
 
 
+      {isDefined(roomInfo.gameInfo.gameWinner) && (
+        <div className="flex flex-col gap-4">
+          <p className="text-3xl">{t('gameWinner', { team: roomInfo.gameInfo.gameWinner })}</p>
+          <Button disabled={!isRoomHost} onClick={startGame}>{t('playAgain')}</Button>
+        </div>
+      )}
+
       {roomInfo.gameStarted && (
         <>
-          <p>{t('teamTurn', { team: teamTurn })}</p>
+          {!roomInfo.gameInfo.gameWinner && (
+            <p className="text-3xl">{t('teamTurn', { team: teamTurn })}</p>
+          )}
           <UltimateTicTacToe
-            currentPlayer={playerInfo}
-            disabled={teamTurn !== playerInfo?.team}
+            disabled={teamTurn !== playerInfo?.team || isDefined(roomInfo.gameInfo.gameWinner)}
+            gameInfo={roomInfo.gameInfo}
             onClick={onClick}
-            selectedAreas={roomInfo.gameInfo?.selectedAreas}
           />
         </>
       )}

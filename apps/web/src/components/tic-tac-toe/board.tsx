@@ -1,29 +1,19 @@
-import { cn } from "@src/lib/utils";
 import { BoardArea } from "./board-area";
-import { AreaLocation, isAreaDisabled, SelectedArea } from "@repo/commons";
+import { AreaLocation, SelectedArea, Team } from "@repo/commons";
 
 const N = 3;
 const areas = Array.from({ length: N * N }).map((_, i) => i);
 
 interface BoardProps {
   disabled?: boolean;
+  boardWinner?: Team;
   selectedAreas?: SelectedArea[];
   onClick: (area: AreaLocation) => void;
   parentArea: number;
 }
 
 export function Board(props: BoardProps) {
-  const { disabled, selectedAreas = [], onClick, parentArea: x } = props;
-
-  const getBackgroundColor = (x: number, y: number) => {
-    const selected = selectedAreas.find((area) => area.location.x === x && area.location.y === y)
-
-    if (selected) {
-      return '';
-    }
-
-    return 'disabled:bg-[#fff2]';
-  }
+  const { disabled, boardWinner, selectedAreas = [], onClick, parentArea: x } = props;
 
   const handleOnClick = (area: AreaLocation) => {
     onClick(area);
@@ -31,13 +21,19 @@ export function Board(props: BoardProps) {
 
   return (
     <>
+      {boardWinner && (
+        <div className="absolute inset-0.5 flex items-center justify-center bg-black bg-opacity-90">
+          <p className="text-6xl text-white">{boardWinner}</p>
+        </div>
+      )}
+      {disabled && !boardWinner && (
+        <div className="absolute inset-0.5 flex bg-[#a8a29ecc] cursor-not-allowed" />
+      )}
       {areas.map((y) => (
         <BoardArea key={y}>
           <button
-            className={cn('size-16 text-4xl [&:not([disabled])]:hover:bg-accent hover:cursor-pointer disabled:cursor-not-allowed', {
-              [getBackgroundColor(x, y)]: true,
-            })}
-            disabled={disabled || isAreaDisabled({ x, y }, selectedAreas)}
+            className="size-16 text-4xl hover:bg-accent hover:cursor-pointer"
+            disabled={disabled}
             onClick={() => { handleOnClick({ x, y }) }}
             type="button"
           >
