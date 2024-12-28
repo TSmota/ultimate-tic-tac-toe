@@ -188,7 +188,11 @@ export default function GamePage(props: Props) {
   }, [lastJsonMessage]);
 
   if (isLoadingInformation || !roomInfo) {
-    return <Loader className="animate-spin" />;
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <Loader className="animate-spin" />
+      </div>
+    );
   }
 
   const players = roomInfo.players ?? [];
