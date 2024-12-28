@@ -157,6 +157,14 @@ export default function GamePage(props: Props) {
             }
           }
 
+          if (!wonBoardGame && clickedCellBoardAreas.length === 9) {
+            boardWinners[payload.location.x] = '-';
+          }
+
+          if (!gameWinner && Object.keys(boardWinners).length === 9) {
+            gameWinner = '-';
+          }
+
           const nextBoard = boardWinners[payload.location.y] ? undefined : payload.location.y;
 
           updateRoomInfo({

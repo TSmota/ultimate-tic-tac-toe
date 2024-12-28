@@ -82,6 +82,6 @@
     "startGame": "Iniciar jogo",
     "playAgain": "Jogar novamente",
     "teamTurn": "Vez de {team}",
-    "gameWinner": "{team} venceu!"
+    "gameWinner": "{team, select, X {X venceu} O {O venceu} other {É um empate}}!"
   }
 }

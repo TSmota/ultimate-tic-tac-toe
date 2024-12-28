@@ -1,6 +1,6 @@
 import { GameVariant } from "./game-variants";
 
-export type Team = 'X' | 'O';
+export type Team = 'X' | 'O' | '-'; // '-' means draw
 
 export type AreaLocation = {
   x: number;
