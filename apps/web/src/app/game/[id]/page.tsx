@@ -7,7 +7,7 @@ import { storageService } from '@src/services/storage';
 import { PLAYER_INFO_KEY, ROOM_INFO_KEY } from '@src/constants';
 import { UltimateTicTacToe } from '@src/components/tic-tac-toe/ultimate-tic-tac-toe';
 import { useRoomSocket } from './room-socket-context';
-import { Loader } from 'lucide-react';
+import { CopyIcon, LoaderIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@src/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@src/components/ui/toggle-group';
@@ -49,7 +49,7 @@ export default function GamePage(props: Props) {
     const localPlayerInfo = storageService.getItem<PlayerInfo>(PLAYER_INFO_KEY);
 
     if (!localPlayerInfo) {
-      router.push('/');
+      router.push(`/?code=${params.id}`);
       return;
     }
 
@@ -190,7 +190,7 @@ export default function GamePage(props: Props) {
   if (isLoadingInformation || !roomInfo) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <Loader className="animate-spin" />
+        <LoaderIcon className="animate-spin" />
       </div>
     );
   }
@@ -241,12 +241,17 @@ export default function GamePage(props: Props) {
     });
   };
 
+  const copyRoomLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+  };
+
   const teamTurn = getTeamTurn(roomInfo.gameInfo);
 
   return (
     <div className="flex flex-col items-center gap-8">
-      <p> {/* TODO: Change this */}
-        {params.id} {`- Game mode: ${roomInfo.variant}`}
+      <p className="flex items-center gap-4">
+        {params.id}
+        <CopyIcon className="cursor-pointer" onClick={copyRoomLink} />
       </p>
 
       <div className={cn('flex justify-between w-[80%]', { 'hidden': roomInfo.gameStarted })}>

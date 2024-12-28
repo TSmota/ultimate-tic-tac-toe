@@ -5,11 +5,14 @@ import { useState } from 'react';
 import { AboutDialog } from '@src/components/about-dialog';
 import { CreateGameDialog } from '@src/components/create-game-dialog';
 import { JoinGameDialog } from '@src/components/join-game-dialog';
+import { useSearchParams } from 'next/navigation';
 
 export default function HomePage() {
   const t = useTranslations('home');
+  const params = useSearchParams();
+  const code = params.get('code');
 
-  const [option, setOption] = useState('');
+  const [option, setOption] = useState(code ? 'join' : '');
 
   return (
     <div className="flex flex-col gap-12 p-20 size-full text-center">
@@ -43,6 +46,7 @@ export default function HomePage() {
         onOpenChange={(open) => { setOption(open ? 'create' : ''); }}
       />
       <JoinGameDialog
+        code={code ?? ''}
         open={option === 'join'}
         onOpenChange={(open) => { setOption(open ? 'join' : ''); }}
       />

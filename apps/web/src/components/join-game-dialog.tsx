@@ -22,6 +22,7 @@ import { Button } from './ui/button';
 import { v4 as uuidv4 } from 'uuid';
 
 interface JoinGameDialogProps {
+  code?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -56,6 +57,10 @@ export function JoinGameDialog(props: JoinGameDialogProps) {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    values: {
+      code: props.code ?? '',
+      username: '',
+    }
   });
 
   useEffect(() => {
