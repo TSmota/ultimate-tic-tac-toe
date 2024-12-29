@@ -7,6 +7,7 @@ import { Header } from '@src/components/header';
 import { ThemeProvider } from '@src/components/theme-provider';
 import '../styles/global.css';
 import { cn } from '@src/lib/utils';
+import { Footer } from '@src/components/footer';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -30,11 +31,14 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={cn('bg-background min-h-screen antialiased', inter.variable)}>
+      <body className={cn('bg-background min-h-screen antialiased flex flex-col', inter.variable)}>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Header />
-            {children}
+            <div className="flex flex-col flex-1">
+              {children}
+            </div>
+            <Footer />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

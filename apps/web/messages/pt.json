@@ -31,9 +31,8 @@
     "dialog": {
       "close": "Fechar"
     },
-    "aboutDialog": {
-      "title": "Oi, tudo bem 👋",
-      "content": "Sou um engenheiro de software e criei este jogo para praticar minhas habilidades. Espero que você goste! Se você tiver algum feedback, por favor me avise. Você pode me encontrar no GitHub em <githubLink>@TSmota</githubLink>. \n\nEste jogo é uma reprodução do jogo \"Super jogo da velha\", você pode verificar a wikipedia para uma explicação completa sobre ele."
+    "footer": {
+      "content": "Feito com ❤️ por <githubLink>@TSmota</githubLink>."
     },
     "createGameDialog": {
       "fields": {

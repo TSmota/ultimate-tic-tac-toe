@@ -19,7 +19,7 @@ export default function GamePageLayout({ children, params }: Props) {
 
   const webSocket = useWebSocket<WebSocketMessage>(`${WS_ENDPOINT}/${params.id}`, {
     heartbeat: {
-      interval: 15000,
+      interval: 3000,
       message: JSON.stringify({
         ...keepAliveMessage,
         payload: 'ping',

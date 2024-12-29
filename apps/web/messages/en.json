@@ -31,9 +31,8 @@
     "dialog": {
       "close": "Close"
     },
-    "aboutDialog": {
-      "title": "Hi, there 👋",
-      "content": "I'm a software engineer and I created this game to practice my skills. I hope you enjoy it! If you have any feedback, please let me know. You can find me on GitHub at <githubLink>@TSmota</githubLink>. \n\nThis game is a reproduction of the game \"Ultimate Tic-Tac-Toe\", you can check the wikipedia for a complete explanation about it."
+    "footer": {
+      "content": "Made with ❤️ by <githubLink>@TSmota</githubLink>."
     },
     "createGameDialog": {
       "fields": {

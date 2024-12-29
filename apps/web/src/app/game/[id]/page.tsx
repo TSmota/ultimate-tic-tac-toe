@@ -137,7 +137,8 @@ export default function GamePage(props: Props) {
       }
       case WebSocketServerAction.CELL_CLICKED: {
         if (roomInfo?.gameInfo) {
-          const selectedAreas = [...roomInfo.gameInfo.selectedAreas, payload];
+          const selectedAreas = [...roomInfo.gameInfo.selectedAreas, payload]
+            .filter((area, index, self) => self.findIndex((a) => a.location.x === area.location.x && a.location.y === area.location.y) === index);
 
           const clickedCellBoardAreas = selectedAreas.filter((area) => area.location.x === payload.location.x);
           const teamAreas = clickedCellBoardAreas.filter((area) => area.player.team === payload.player.team);
@@ -249,12 +250,7 @@ export default function GamePage(props: Props) {
 
   return (
     <div className="flex flex-col items-center gap-8">
-      <p className="flex items-center gap-4">
-        {params.id}
-        <CopyIcon className="cursor-pointer" onClick={copyRoomLink} />
-      </p>
-
-      <div className={cn('flex justify-between w-[80%]', { 'hidden': roomInfo.gameStarted })}>
+      <div className="flex justify-between w-[80%]">
         <div className="flex flex-col gap-1">
           <p>{t('players')}</p>
 
@@ -263,7 +259,14 @@ export default function GamePage(props: Props) {
           ))}
         </div>
 
-        <div className="flex flex-col gap-1">
+        <p className="flex items-center gap-4">
+          {params.id}
+          <CopyIcon className="cursor-pointer" onClick={copyRoomLink} />
+        </p>
+      </div>
+
+      <div className={cn('flex flex-col gap-10', { 'hidden': roomInfo.gameStarted })}>
+        <div className="flex flex-col gap-4">
           <p>{t('selectTeam')}</p>
 
           <ToggleGroup disabled={roomInfo.gameStarted} onValueChange={onSelectTeam} type="single" value={playerInfo?.team} variant="outline">
@@ -283,7 +286,7 @@ export default function GamePage(props: Props) {
       {isDefined(roomInfo.gameInfo.gameWinner) && (
         <div className="flex flex-col gap-4">
           <p className="text-3xl">{t('gameWinner', { team: roomInfo.gameInfo.gameWinner })}</p>
-          <Button disabled={!isRoomHost} onClick={startGame}>{t('playAgain')}</Button>
+          {isRoomHost && <Button onClick={startGame}>{t('playAgain')}</Button>}
         </div>
       )}
 
