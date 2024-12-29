@@ -1,81 +1,34 @@
-# Turborepo starter
+# Ultimate tic-tac-toe
 
-This is an official starter Turborepo.
+This project is a reproduction of the game [Ultimate Tic-Tac-Toe](https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe).
 
-## Using this example
+## Purpose
 
-Run the following command:
+The primary goal of this project is to explore and gain practical experience with WebSockets, implement internationalization, and enhance my expertise in web development.
 
-```sh
-npx create-turbo@latest
-```
+## Tech stack
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
+- [Next.JS](https://nextjs.org/): A powerful framework for building React applications.
+- [Fastify](https://fastify.dev/): A fast and efficient web framework for the back end.
+- [Tailwind](https://tailwindcss.com/): A utility-first CSS framework for designing modern and responsive UIs.
+- [Turbo Repo](https://turbo.build/): A tool for managing monorepos to improve project organization and scalability.
+- [Shadcn/UI](https://ui.shadcn.com/): A collection of pre-designed UI components for faster development.
 
 ## Useful Links
 
-Learn more about the power of Turborepo:
+The project is hosted on [Vercel](https://vercel.com) for the front end and [Render](https://render.com) for the back end. You can access the live version of the game using the link below:
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+- [Ultimate Tic-Tac-Toe](https://ultimate-tic-tac-toe-mota.vercel.app/)
+
+## Roadmap
+
+Planned improvements for this project
+
+- [] Handle player disconnect (closing tab, connection lost, etc)
+- [] Improve game page layout
+- [] Create a "Join game" page instead of using a modal
+- [] List public rooms on the “Join game” page
+- [] Handle more than two people per room (enable spectating)
+- [] Add new game modes: Unlocked and Conquer
+- [] Implement a tournament mode
+- [] Allow setting a time limit for each move
