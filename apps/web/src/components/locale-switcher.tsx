@@ -1,8 +1,10 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
+
 import { type Locale, locales } from '@src/constants';
 import { setUserLocale } from '@src/services/locale';
+
 import { Select, SelectContent, SelectItem, SelectTrigger } from './ui/select';
 
 export function LocaleSwitcher() {

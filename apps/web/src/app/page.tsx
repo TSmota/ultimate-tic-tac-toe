@@ -2,9 +2,10 @@
 
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+
 import { CreateGameDialog } from '@src/components/create-game-dialog';
 import { JoinGameDialog } from '@src/components/join-game-dialog';
-import { useSearchParams } from 'next/navigation';
 
 export default function HomePage() {
   const t = useTranslations('home');

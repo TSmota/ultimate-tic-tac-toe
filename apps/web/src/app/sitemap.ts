@@ -1,5 +1,6 @@
 import { type MetadataRoute } from 'next';
-import { locales, defaultLocale, host } from '@src/constants';
+
+import { defaultLocale, host, locales } from '@src/constants';
 
 const pathnames = {};
 

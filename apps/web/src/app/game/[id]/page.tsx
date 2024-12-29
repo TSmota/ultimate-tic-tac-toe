@@ -3,17 +3,18 @@
 import { useEffect, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
 import { type AreaLocation, checkBoardWin, getTeamTurn, isDefined, PlayerInfo, type RoomInfo, Team, WebSocketClientAction, WebSocketServerAction } from '@repo/commons';
+import { CopyIcon, LoaderIcon, CircleIcon, XIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+
+import { cn } from '@src/lib/utils';
 import { storageService } from '@src/services/storage';
 import { PLAYER_INFO_KEY, ROOM_INFO_KEY } from '@src/constants';
 import { UltimateTicTacToe } from '@src/components/tic-tac-toe/ultimate-tic-tac-toe';
-import { useRoomSocket } from './room-socket-context';
-import { CopyIcon, LoaderIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@src/components/ui/button';
-import { CircleIcon, XIcon } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { cn } from '@src/lib/utils';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@src/components/ui/table';
+
+import { useRoomSocket } from './room-socket-context';
 
 interface Props {
   params: {

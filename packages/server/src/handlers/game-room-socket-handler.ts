@@ -15,6 +15,7 @@ import {
   type GameStartedMessage,
   type RoomInformationMessage
 } from '@repo/commons';
+
 import { RoomState } from '../types';
 
 export class GameRoomSocketHandler {

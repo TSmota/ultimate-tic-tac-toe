@@ -1,6 +1,7 @@
 'use client';
 
-import { GameInfo, isDefined, type AreaLocation } from "@repo/commons";
+import { type AreaLocation, GameInfo, isDefined } from "@repo/commons";
+
 import { BoardArea } from "./board-area";
 import { Board } from "./board";
 

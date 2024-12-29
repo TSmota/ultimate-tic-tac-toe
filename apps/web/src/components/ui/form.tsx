@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import type * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
 import {
   Controller,
@@ -12,8 +11,12 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { type MessageKeys, type TranslationValues, useTranslations } from 'next-intl';
+
+import type * as LabelPrimitive from '@radix-ui/react-label';
+
 import { cn } from '@src/lib/utils';
 import { Label } from '@src/components/ui/label';
+
 import { type Messages } from '../../../globals';
 
 const Form = FormProvider;

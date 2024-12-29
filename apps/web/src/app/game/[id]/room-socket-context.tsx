@@ -1,4 +1,5 @@
 'use client';
+
 import { type WebSocketMessage } from '@repo/commons';
 import { createContext, type PropsWithChildren, useContext } from 'react';
 import { type WebSocketHook } from 'react-use-websocket/dist/lib/types';

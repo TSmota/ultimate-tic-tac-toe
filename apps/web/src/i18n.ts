@@ -1,5 +1,6 @@
 import { getRequestConfig } from 'next-intl/server';
 import { type IntlConfig } from 'next-intl';
+
 import { defaultLocale, locales } from './constants';
 import { getUserLocale } from './services/locale';
 

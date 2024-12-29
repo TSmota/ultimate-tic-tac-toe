@@ -4,23 +4,24 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { GameVariant, RoomInfo, type PlayerInfo } from '@repo/commons';
+import { GameVariant, type PlayerInfo, RoomInfo } from '@repo/commons';
+import { v4 as uuidv4 } from 'uuid';
+
 import { storageService } from '@src/services/storage';
 import { customZodMessage, generateGameCode } from '@src/lib/utils';
 import { PLAYER_INFO_KEY, ROOM_INFO_KEY } from '@src/constants';
 import { Input } from '@src/components/ui/input';
 import {
+  Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
-  Form,
   FormMessage,
 } from '@src/components/ui/form';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@src/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Button } from './ui/button';
-import { v4 as uuidv4 } from 'uuid';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@src/components/ui/select';
+import { Button } from '@src/components/ui/button';
 
 interface CreateGameDialogProps {
   open?: boolean;

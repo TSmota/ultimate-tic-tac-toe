@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import fastifyWebSocket from '@fastify/websocket';
 import cors from '@fastify/cors';
 import mq from 'mqemitter';
+
 import { GameRoomSocketHandler } from './handlers/game-room-socket-handler';
 import { RoomState } from './types';
 

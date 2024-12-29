@@ -1,5 +1,6 @@
-import { BoardArea } from "./board-area";
 import { AreaLocation, SelectedArea, Team } from "@repo/commons";
+
+import { BoardArea } from "./board-area";
 
 const N = 3;
 const areas = Array.from({ length: N * N }).map((_, i) => i);

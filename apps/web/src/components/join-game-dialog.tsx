@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type PlayerInfo } from '@repo/commons';
+import { v4 as uuidv4 } from 'uuid';
+
 import { PLAYER_INFO_KEY } from '@src/constants';
 import { storageService } from '@src/services/storage';
 import { customZodMessage } from '@src/lib/utils';
@@ -13,13 +15,12 @@ import {
   Form,
   FormControl,
   FormField,
-  FormLabel,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@src/components/ui/form';
 import { Dialog, DialogContent } from '@src/components/ui/dialog';
-import { Button } from './ui/button';
-import { v4 as uuidv4 } from 'uuid';
+import { Button } from '@src/components/ui/button';
 
 interface JoinGameDialogProps {
   code?: string;
