@@ -24,12 +24,12 @@ The project is hosted on [Vercel](https://vercel.com) for the front end and [Ren
 
 Planned improvements for this project
 
-- [] Handle player disconnect (closing tab, connection lost, etc)
-- [] Improve game page layout
-- [] Create a "Join game" page instead of using a modal
-- [] List public rooms on the “Join game” page
-- [] Handle more than two people per room (enable spectating)
-- [] Add new game modes: Unlocked and Conquer
-- [] Implement a tournament mode
-- [] Allow setting a time limit for each move
-- [] Move shadcn components to ui package under `packages`
+- [ ] Handle player disconnect (closing tab, connection lost, etc)
+- [ ] Improve game page layout
+- [ ] Create a "Join game" page instead of using a modal
+- [ ] List public rooms on the “Join game” page
+- [ ] Handle more than two people per room (enable spectating)
+- [ ] Add new game modes: Unlocked and Conquer
+- [ ] Implement a tournament mode
+- [ ] Allow setting a time limit for each move
+- [ ] Move shadcn components to ui package under `packages`
