@@ -32,3 +32,4 @@ Planned improvements for this project
 - [] Add new game modes: Unlocked and Conquer
 - [] Implement a tournament mode
 - [] Allow setting a time limit for each move
+- [] Move shadcn components to ui package under `packages`

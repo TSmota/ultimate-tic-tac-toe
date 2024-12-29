@@ -76,8 +76,8 @@
     }
   },
   "game": {
-    "players": "Jogadores",
-    "selectTeam": "Escolha seu time",
+    "spectators": "Espectadores",
+    "joinTeam": "Juntar-se à {team}",
     "startGame": "Iniciar jogo",
     "playAgain": "Jogar novamente",
     "teamTurn": "Vez de {team}",

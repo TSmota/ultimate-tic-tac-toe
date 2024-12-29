@@ -72,8 +72,8 @@
     }
   },
   "game": {
-    "players": "Players",
-    "selectTeam": "Select your team",
+    "spectators": "Spectators",
+    "joinTeam": "Join {team}",
     "startGame": "Start game",
     "playAgain": "Play again",
     "teamTurn": "{team} turn",

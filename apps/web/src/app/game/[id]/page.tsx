@@ -10,15 +10,31 @@ import { useRoomSocket } from './room-socket-context';
 import { CopyIcon, LoaderIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@src/components/ui/button';
-import { ToggleGroup, ToggleGroupItem } from '@src/components/ui/toggle-group';
 import { CircleIcon, XIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@src/lib/utils';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@src/components/ui/table';
 
 interface Props {
   params: {
     id: string;
   };
+}
+
+function TablePlayersCell(props: { players: PlayerInfo[], team?: Team }) {
+  const { players, team } = props;
+
+  return (
+    <TableCell>
+      <span className={cn('flex flex-col gap-2', { 'text-center': !!team })}>
+        {players
+          .filter((player) => player.team === team)
+          .map((player) => (
+            <p key={player.uuid}>{player.username}</p>
+          ))}
+      </span>
+    </TableCell>
+  );
 }
 
 export default function GamePage(props: Props) {
@@ -231,7 +247,7 @@ export default function GamePage(props: Props) {
     });
   };
 
-  const onSelectTeam = (team: 'X' | 'O') => {
+  const onSelectTeam = (team?: 'X' | 'O') => {
     if (!playerInfo) {
       return;
     }
@@ -250,38 +266,48 @@ export default function GamePage(props: Props) {
 
   return (
     <div className="flex flex-col items-center gap-8">
-      <div className="flex justify-between w-[80%]">
-        <div className="flex flex-col gap-1">
-          <p>{t('players')}</p>
-
-          {roomInfo.players.map((player) => (
-            <p key={player.uuid}>{player.username} {player.team}</p>
-          ))}
-        </div>
-
-        <p className="flex items-center gap-4">
-          {params.id}
-          <CopyIcon className="cursor-pointer" onClick={copyRoomLink} />
-        </p>
-      </div>
+      <p className="flex items-center gap-4">
+        {params.id}
+        <CopyIcon className="cursor-pointer" onClick={copyRoomLink} />
+      </p>
 
       <div className={cn('flex flex-col gap-10', { 'hidden': roomInfo.gameStarted })}>
-        <div className="flex flex-col gap-4">
-          <p>{t('selectTeam')}</p>
-
-          <ToggleGroup disabled={roomInfo.gameStarted} onValueChange={onSelectTeam} type="single" value={playerInfo?.team} variant="outline">
-            <ToggleGroupItem value="O" aria-label="Circle team">
-              <CircleIcon />
-            </ToggleGroupItem>
-            <ToggleGroupItem value="X" aria-label="X team">
-              <XIcon />
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('spectators')}</TableHead>
+              <TableHead>
+                <XIcon className="size-8 m-auto" />
+              </TableHead>
+              <TableHead>
+                <CircleIcon className="size-6 m-auto" />
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TablePlayersCell players={players} />
+              <TablePlayersCell players={players} team="X" />
+              <TablePlayersCell players={players} team="O" />
+            </TableRow>
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell>
+                <Button onClick={() => onSelectTeam(undefined)}>{t('joinTeam', { team: t('spectators') })}</Button>
+              </TableCell>
+              <TableCell>
+                <Button onClick={() => onSelectTeam('X')}>{t('joinTeam', { team: 'X' })}</Button>
+              </TableCell>
+              <TableCell>
+                <Button onClick={() => onSelectTeam('O')}>{t('joinTeam', { team: 'O' })}</Button>
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
 
         <Button disabled={!canStart} onClick={startGame}>{t('startGame')}</Button>
       </div>
-
 
       {isDefined(roomInfo.gameInfo.gameWinner) && (
         <div className="flex flex-col gap-4">
