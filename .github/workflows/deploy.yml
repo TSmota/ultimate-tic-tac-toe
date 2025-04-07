@@ -38,5 +38,4 @@ jobs:
             npm ci
             npm run build -w @repo/commons
             npm run build -w @repo/server
-            nohup npm run start -w @repo/server > out.log 2>&1 &
           EOF
