@@ -1,0 +1,42 @@
+name: Deploy to Oracle VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan ${{ secrets.ORACLE_VM_IP_ADDRESS }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        run: |
+          APP_DIR="git/ultimate-tic-tac-toe"
+
+          ssh ubuntu@${{ secrets.ORACLE_VM_IP_ADDRESS }} << EOF
+            set -e
+
+            export NVM_DIR="\$HOME/.nvm"
+            source "\$NVM_DIR/nvm.sh"
+            nvm use 20
+
+            echo "Pulling latest changes..."
+
+            cd $APP_DIR
+            git pull origin main --rebase
+            npm ci
+            npm run build -w @repo/commons
+            npm run build -w @repo/server
+            nohup npm run start -w @repo/server > out.log 2>&1 &
+          EOF
