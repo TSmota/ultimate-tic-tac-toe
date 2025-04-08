@@ -82,6 +82,9 @@
     "startGame": "Start game",
     "playAgain": "Play again",
     "teamTurn": "{team} turn",
-    "gameWinner": "{team, select, X {X wins} O {O wins} other {It's a draw}}!"
+    "gameWinner": "{team, select, X {X wins} O {O wins} other {It's a draw}}!",
+    "team": "Team",
+    "history": "History",
+    "position": "Position"
   }
 }

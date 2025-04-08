@@ -1,20 +1,33 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ReadyState } from 'react-use-websocket';
-import { type AreaLocation, checkBoardWin, getTeamTurn, isDefined, PlayerInfo, type RoomInfo, Team, WebSocketClientAction, WebSocketServerAction } from '@repo/commons';
-import { CopyIcon, LoaderIcon, CircleIcon, XIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import {
+  type AreaLocation,
+  getTeamTurn,
+  isDefined,
+  PlayerInfo,
+  Team,
+  WebSocketClientAction,
+} from '@repo/commons';
+import { CircleIcon, CopyIcon, LoaderIcon, XIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { cn } from '@src/lib/utils';
-import { storageService } from '@src/services/storage';
-import { PLAYER_INFO_KEY, ROOM_INFO_KEY } from '@src/constants';
 import { UltimateTicTacToe } from '@src/components/tic-tac-toe/ultimate-tic-tac-toe';
 import { Button } from '@src/components/ui/button';
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@src/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@src/components/ui/table';
 
 import { useRoomSocket } from './room-socket-context';
+import { useRoomInformation } from './use-room-information';
 
 interface Props {
   params: {
@@ -22,11 +35,11 @@ interface Props {
   };
 }
 
-function TablePlayersCell(props: { players: PlayerInfo[], team?: Team }) {
+function TablePlayersCell(props: { players: PlayerInfo[]; team?: Team }) {
   const { players, team } = props;
 
   return (
-    <TableCell>
+    <TableCell className="align-top">
       <span className={cn('flex flex-col gap-2', { 'text-center': !!team })}>
         {players
           .filter((player) => player.team === team)
@@ -41,42 +54,13 @@ function TablePlayersCell(props: { players: PlayerInfo[], team?: Team }) {
 export default function GamePage(props: Props) {
   const { params } = props;
 
-  const [isLoadingInformation, setIsLoadingInformation] = useState(true);
-  const [playerInfo, setPlayerInfo] = useState<PlayerInfo>();
-  const [roomInfo, setRoomInfo] = useState<RoomInfo>();
+  const { isRoomHost, playerInfo, roomInfo, updatePlayerInfo } = useRoomInformation({
+    roomId: params.id,
+  });
+
   const t = useTranslations('game');
 
-  const router = useRouter();
-  const { lastJsonMessage, readyState, sendJsonMessage } = useRoomSocket();
-
-  const isRoomHost = roomInfo?.host === playerInfo?.uuid;
-
-  const updatePlayerInfo = (info: PlayerInfo) => {
-    setPlayerInfo(info);
-    storageService.setItem(PLAYER_INFO_KEY, info);
-  }
-
-  const updateRoomInfo = (info: RoomInfo) => {
-    setRoomInfo(info);
-    storageService.setItem(`${params.id}-${ROOM_INFO_KEY}`, info);
-  }
-
-  useEffect(() => {
-    const localRoomInfo = storageService.getItem<RoomInfo>(`${params.id}-${ROOM_INFO_KEY}`);
-    const localPlayerInfo = storageService.getItem<PlayerInfo>(PLAYER_INFO_KEY);
-
-    if (!localPlayerInfo) {
-      router.push(`/?code=${params.id}`);
-      return;
-    }
-
-    setPlayerInfo(localPlayerInfo);
-
-    if (localRoomInfo && localPlayerInfo.uuid === localRoomInfo.host) {
-      setRoomInfo(localRoomInfo);
-      setIsLoadingInformation(false);
-    }
-  }, []);
+  const { readyState, sendJsonMessage } = useRoomSocket();
 
   useEffect(() => {
     if (readyState === ReadyState.CLOSED) {
@@ -99,127 +83,21 @@ export default function GamePage(props: Props) {
     });
   }, [readyState, params, playerInfo]);
 
-  useEffect(() => {
-    if (!lastJsonMessage) {
-      return;
-    }
-
-    const { type, payload } = lastJsonMessage;
-
-    switch (type) {
-      case WebSocketServerAction.PLAYER_INFO: {
-        if (roomInfo && isRoomHost) {
-          const isNewPlayer = !roomInfo.players.some((player) => player.uuid === payload.player.uuid);
-
-          const players = isNewPlayer
-            ? [...roomInfo.players, payload.player]
-            : roomInfo.players.map(player => {
-              if (player.uuid === payload.player.uuid) {
-                return payload.player;
-              }
-
-              return player;
-            });
-
-          sendJsonMessage({
-            broadcast: true,
-            type: WebSocketClientAction.UPDATE_ROOM_INFORMATION,
-            topic: params.id,
-            payload: {
-              ...roomInfo,
-              players,
-            } as RoomInfo,
-          });
-        }
-        break;
-      }
-      case WebSocketServerAction.ROOM_INFORMATION: {
-        updateRoomInfo(payload);
-        setIsLoadingInformation(false);
-        break;
-      }
-      case WebSocketServerAction.GAME_STARTED: {
-        if (!roomInfo) {
-          return;
-        }
-
-        updateRoomInfo({
-          ...roomInfo,
-          gameInfo: {
-            selectedAreas: [],
-          },
-          gameStarted: true,
-        });
-        break;
-      }
-      case WebSocketServerAction.CELL_CLICKED: {
-        if (roomInfo?.gameInfo) {
-          const selectedAreas = [...roomInfo.gameInfo.selectedAreas, payload]
-            .filter((area, index, self) => self.findIndex((a) => a.location.x === area.location.x && a.location.y === area.location.y) === index);
-
-          const clickedCellBoardAreas = selectedAreas.filter((area) => area.location.x === payload.location.x);
-          const teamAreas = clickedCellBoardAreas.filter((area) => area.player.team === payload.player.team);
-
-          const wonBoardGame = checkBoardWin(teamAreas.map((area) => area.location.y));
-          const boardWinners = roomInfo.gameInfo.boardWinners ?? {};
-
-          let gameWinner: Team | undefined = undefined;
-
-          if (wonBoardGame && payload.player.team) {
-            boardWinners[payload.location.x] = payload.player.team;
-
-            const teamBoards = Object.entries(boardWinners).filter(([, team]) => team === payload.player.team).map(([n]) => Number(n));
-
-            if (checkBoardWin(teamBoards)) {
-              gameWinner = payload.player.team;
-            }
-          }
-
-          if (!wonBoardGame && clickedCellBoardAreas.length === 9) {
-            boardWinners[payload.location.x] = '-';
-          }
-
-          if (!gameWinner && Object.keys(boardWinners).length === 9) {
-            gameWinner = '-';
-          }
-
-          const nextBoard = boardWinners[payload.location.y] ? undefined : payload.location.y;
-
-          updateRoomInfo({
-            ...roomInfo,
-            gameInfo: {
-              ...roomInfo.gameInfo,
-              boardWinners,
-              gameWinner,
-              currentBoard: nextBoard,
-              selectedAreas,
-            }
-          });
-        }
-        break;
-      }
-
-      default:
-        console.warn('Unknown message type', lastJsonMessage);
-        break;
-    }
-  }, [lastJsonMessage]);
-
-  if (isLoadingInformation || !roomInfo) {
+  if (!roomInfo) {
     return (
-      <div className="flex flex-col items-center justify-center h-full">
+      <div className="flex h-full flex-col items-center justify-center">
         <LoaderIcon className="animate-spin" />
       </div>
     );
   }
 
   const players = roomInfo.players ?? [];
-  const canStart = !roomInfo.gameStarted
-    && isRoomHost
-    && players?.length === 2
-    && players[0]?.team
-    && players[1]?.team
-    && players[0].team !== players[1].team;
+  const canStart =
+    !roomInfo.gameStarted &&
+    isRoomHost &&
+    players?.length >= 2 &&
+    players?.some((player) => player.team === 'X') &&
+    players?.some((player) => player.team === 'O');
 
   const startGame = () => {
     sendJsonMessage({
@@ -230,7 +108,7 @@ export default function GamePage(props: Props) {
         players,
       },
     });
-  }
+  };
 
   const onClick = (location: AreaLocation) => {
     if (!playerInfo) {
@@ -260,7 +138,7 @@ export default function GamePage(props: Props) {
   };
 
   const copyRoomLink = () => {
-    navigator.clipboard.writeText(window.location.href);
+    void navigator.clipboard.writeText(window.location.href);
   };
 
   const teamTurn = getTeamTurn(roomInfo.gameInfo);
@@ -272,16 +150,16 @@ export default function GamePage(props: Props) {
         <CopyIcon className="cursor-pointer" onClick={copyRoomLink} />
       </p>
 
-      <div className={cn('flex flex-col gap-10', { 'hidden': roomInfo.gameStarted })}>
+      <div className={cn('flex flex-col gap-10', { hidden: roomInfo.gameStarted })}>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>{t('spectators')}</TableHead>
               <TableHead>
-                <XIcon className="size-8 m-auto" />
+                <XIcon className="m-auto size-8" />
               </TableHead>
               <TableHead>
-                <CircleIcon className="size-6 m-auto" />
+                <CircleIcon className="m-auto size-6" />
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -295,7 +173,9 @@ export default function GamePage(props: Props) {
           <TableFooter>
             <TableRow>
               <TableCell>
-                <Button onClick={() => onSelectTeam(undefined)}>{t('joinTeam', { team: t('spectators') })}</Button>
+                <Button onClick={() => onSelectTeam(undefined)}>
+                  {t('joinTeam', { team: t('spectators') })}
+                </Button>
               </TableCell>
               <TableCell>
                 <Button onClick={() => onSelectTeam('X')}>{t('joinTeam', { team: 'X' })}</Button>
@@ -307,7 +187,9 @@ export default function GamePage(props: Props) {
           </TableFooter>
         </Table>
 
-        <Button disabled={!canStart} onClick={startGame}>{t('startGame')}</Button>
+        <Button disabled={!canStart} onClick={startGame}>
+          {t('startGame')}
+        </Button>
       </div>
 
       {isDefined(roomInfo.gameInfo.gameWinner) && (
@@ -322,11 +204,36 @@ export default function GamePage(props: Props) {
           {!roomInfo.gameInfo.gameWinner && (
             <p className="text-3xl">{t('teamTurn', { team: teamTurn })}</p>
           )}
-          <UltimateTicTacToe
-            disabled={teamTurn !== playerInfo?.team || isDefined(roomInfo.gameInfo.gameWinner)}
-            gameInfo={roomInfo.gameInfo}
-            onClick={onClick}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto]">
+            <UltimateTicTacToe
+              disabled={teamTurn !== playerInfo?.team || isDefined(roomInfo.gameInfo.gameWinner)}
+              gameInfo={roomInfo.gameInfo}
+              onClick={onClick}
+            />
+            <Table className="w-full md:w-min text-center">
+              <TableHeader>
+                <TableRow>
+                  <TableHead colSpan={2}>{t('history')}</TableHead>
+                </TableRow>
+                <TableRow>
+                  <TableHead>{t('position')}</TableHead>
+                  <TableHead>{t('team')}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {roomInfo.gameInfo.selectedAreas.map((area) => (
+                  <TableRow key={`${area.location.x}-${area.location.y}`}>
+                    <TableCell>
+                      {area.location.x + 1}{` - `}{area.location.y + 1}
+                    </TableCell>
+                    <TableCell>
+                      {area.player.team}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </>
       )}
     </div>
