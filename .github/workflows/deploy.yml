@@ -38,8 +38,7 @@ jobs:
 
             cd $APP_DIR
             git pull origin main --rebase
-            npm ci
+            npm install --verbose
             npm run build -w @repo/commons
             npm run build -w @repo/server
           EOF
-#            pm2 restart ttt_server || pm2 start ./packages/server/dist/server.js --name ttt_server
