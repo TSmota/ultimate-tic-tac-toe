@@ -6,16 +6,20 @@ import { API_ENDPOINT } from '@src/constants';
 
 type ServerStatus = 'up' | 'down' | 'loading';
 
-async function ServerHealthStatus({ status }: { status: ServerStatus }) {
+async function ServerHealthIndicator({ status }: { status: ServerStatus }) {
   const t = await getTranslations('components.serverStatus');
-  const color = status === 'up' ? 'green' : status === 'down' ? 'red' : 'yellow';
 
   return (
-    <div className={`flex h-10 items-center rounded-md border border-${color}-300 pl-1 pr-3`}>
-      <Dot
-        className={`h-6 w-6 animate-pulse text-${color}-500`}
-        strokeWidth={6}
-      />
+    <div
+      className={`flex h-10 items-center rounded-md border pl-1 pr-3 ${
+        status === 'up'
+          ? 'border-green-300 text-green-500'
+          : status === 'down'
+            ? 'border-red-300 text-red-500'
+            : 'border-yellow-300 text-yellow-500'
+      }`}
+    >
+      <Dot className={`h-6 w-6 animate-pulse`} strokeWidth={6} />
       <span className="text-sm">{t(status)}</span>
     </div>
   );
@@ -30,22 +34,24 @@ async function ServerHealthCheck() {
       cache: 'no-store',
     });
 
+    const data = await response.json();
+
     if (response.ok) {
       status = 'up';
     }
+
+    console.log(data);
   } catch (error) {
     console.error('Error fetching server health:', error);
     status = 'down';
   }
 
-  return (
-    <ServerHealthStatus status={status} />
-  );
+  return <ServerHealthIndicator status={status} />;
 }
 
-export async function ServerHealth() {
+export async function ServerStatus() {
   return (
-    <Suspense fallback={<ServerHealthStatus status="loading" />}>
+    <Suspense fallback={<ServerHealthIndicator status="loading" />}>
       <ServerHealthCheck />
     </Suspense>
   );

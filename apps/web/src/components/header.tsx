@@ -3,7 +3,7 @@ import { HashIcon } from 'lucide-react';
 
 import { LocaleSwitcher } from './locale-switcher';
 import { ThemeToggle } from './theme-toggle';
-import { ServerHealth } from '@src/components/server-health';
+import { ServerStatus } from '@src/components/server-status';
 
 export function Header() {
   return (
@@ -11,7 +11,7 @@ export function Header() {
       <Link className="mr-auto" href="/">
         <HashIcon className="h-8 w-8" />
       </Link>
-      <ServerHealth />
+      <ServerStatus />
       <LocaleSwitcher />
       <ThemeToggle />
     </header>
