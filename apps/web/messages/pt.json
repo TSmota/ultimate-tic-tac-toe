@@ -73,6 +73,11 @@
       "light": "Claro",
       "system": "Sistema",
       "toggle": "Alternar tema"
+    },
+    "serverStatus": {
+      "up": "Servidor está ativo",
+      "down": "Servidor está inativo",
+      "loading": "Verificando status do servidor..."
     }
   },
   "game": {

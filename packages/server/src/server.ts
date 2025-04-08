@@ -32,6 +32,21 @@ server.register(async function (fastify) {
     new GameRoomSocketHandler(socket, emitter, req.params.room, rooms);
   });
 
+  fastify.get('/api/healthcheck', async (_, reply) => {
+    const healthcheck = {
+      status: 'ok',
+      timestamp: Date.now(),
+      uptime: process.uptime(),
+    };
+
+    try {
+      reply.send(healthcheck);
+    } catch (error) {
+      server.log.error('Error sending healthcheck response:', error);
+      reply.status(500).send({ error: 'Internal Server Error' });
+    }
+  });
+
   fastify.get('/api/rooms', () => {
     return Array.from(rooms.values());
   });

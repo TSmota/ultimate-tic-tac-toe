@@ -72,6 +72,7 @@ export class GameRoomSocketHandler {
     if (parsedMessage.type !== WebSocketCommonAction.KEEP_ALIVE) {
       console.log('Received message:', parsedMessage);
     }
+
     switch (parsedMessage.type) {
       case WebSocketCommonAction.KEEP_ALIVE:
         this.handleKeepAlive();
