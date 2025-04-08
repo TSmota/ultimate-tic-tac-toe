@@ -13,10 +13,24 @@ interface BoardProps {
   parentArea: number;
 }
 
+function toLocationKey(location: AreaLocation) {
+  return `${location.x}${location.y}`;
+}
+
 export function Board(props: BoardProps) {
   const { disabled, boardWinner, selectedAreas = [], onClick, parentArea: x } = props;
 
+  const selectedAreasMap = selectedAreas.reduce((map, area) => {
+    map.set(toLocationKey(area.location), area);
+
+    return map;
+  }, new Map<string, SelectedArea>());
+
   const handleOnClick = (area: AreaLocation) => {
+    if (disabled || selectedAreasMap.has(toLocationKey(area))) {
+      return;
+    }
+
     onClick(area);
   }
 
@@ -38,7 +52,7 @@ export function Board(props: BoardProps) {
             onClick={() => { handleOnClick({ x, y }) }}
             type="button"
           >
-            {selectedAreas.find((area) => area.location.x === x && area.location.y === y)?.player.team}
+            {selectedAreasMap.get(toLocationKey({ x, y }))?.player.team}
           </button>
         </BoardArea>
       ))}

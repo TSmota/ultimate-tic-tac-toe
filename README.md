@@ -18,7 +18,7 @@ The primary goal of this project is to explore and gain practical experience wit
 
 The project is hosted on [Vercel](https://vercel.com) for the front end and [Render](https://render.com) for the back end. You can access the live version of the game using the link below:
 
-- [Ultimate Tic-Tac-Toe](https://ultimate-tic-tac-toe-mota.vercel.app/)
+- [Ultimate Tic-Tac-Toe](https://tic-tac-toe.thiagoms.dev/)
 
 ## Roadmap
 
