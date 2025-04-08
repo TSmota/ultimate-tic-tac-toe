@@ -1,7 +1,8 @@
-import { Dot } from 'lucide-react';
-import { API_ENDPOINT } from '@src/constants';
 import { Suspense } from 'react';
+import { Dot } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+
+import { API_ENDPOINT } from '@src/constants';
 
 type ServerStatus = 'up' | 'down' | 'loading';
 

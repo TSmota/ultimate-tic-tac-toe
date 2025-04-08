@@ -38,5 +38,5 @@ jobs:
             npm ci
             npm run build -w @repo/commons
             npm run build -w @repo/server
-            pm2 restart ttt_server || pm2 start ./packages/server/dist/server.js --name ttt_server
           EOF
+#            pm2 restart ttt_server || pm2 start ./packages/server/dist/server.js --name ttt_server
