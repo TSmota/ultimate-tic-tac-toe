@@ -1,0 +1,32 @@
+portfolio:
+  id: ultimate-tic-tac-toe
+  order: 1
+  status: completed
+  technologies:
+    - Next.js
+    - React
+    - TypeScript
+    - Fastify
+    - TailwindCSS
+    - shadcn/ui
+    - next-intl
+    - Turbo Repo
+  liveUrl: https://tic-tac-toe.thiagoms.dev/
+  i18n:
+    en:
+      name: Ultimate Tic Tac Toe
+      description: >-
+        A reproduction of the classic ultimate tic tac toe game featuring
+        real-time multiplayer functionality with WebSockets,
+        internationalization support, and light/dark theme switching for an
+        enhanced user experience.
+    pt:
+      name: Ultimate Tic Tac Toe
+      description: >-
+        Uma reprodução do clássico jogo ultimate tic tac toe com
+        funcionalidade multiplayer em tempo real usando WebSockets, suporte à
+        internacionalização e alternância entre temas claro/escuro para uma
+        experiência de usuário aprimorada.
+  images:
+    - source: docs/screenshots/preview.png
+      name: tic-tac-toe.png
